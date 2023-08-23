@@ -1,5 +1,5 @@
 name: Linux (Ubuntu)
-run-name: ${{ github.actor }} put something new in the game
+run-name: ${{ github.actor }} builds "${{ github.event.head_commit.message }}"
 
 on:
   push:
