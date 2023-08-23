@@ -1,4 +1,5 @@
-name: Rust
+name: Linux (Ubuntu)
+run-name: ${{ github.actor }} put something new in the game
 
 on:
   push:
