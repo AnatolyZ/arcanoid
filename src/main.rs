@@ -1,4 +1,5 @@
 mod ball;
+mod brick;
 mod platform;
 mod play_area;
 mod textures;
@@ -7,6 +8,7 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use ball::BallPlugin;
+use brick::BricksPlugin;
 use platform::PlatformPlugin;
 use play_area::PlayAreaPlugin;
 use textures::{TexturesPlugin, TILE_SIZE};
@@ -25,6 +27,7 @@ fn main() {
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
             PlatformPlugin,
             BallPlugin,
+            BricksPlugin,
             PlayAreaPlugin,
             TexturesPlugin,
             //RapierDebugRenderPlugin::default(),
