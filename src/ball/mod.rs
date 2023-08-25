@@ -2,6 +2,7 @@ mod components;
 mod systems;
 
 use bevy::prelude::*;
+pub use components::Ball;
 
 const MAX_X_SPEED: f32 = 400.0;
 const MAX_Y_SPEED: f32 = 400.0;

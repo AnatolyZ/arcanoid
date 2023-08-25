@@ -1,5 +1,7 @@
-use super::components::Brick;
+use super::components::{Brick, Health};
+use crate::ball::Ball;
 use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
+use bevy::log;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
@@ -16,9 +18,11 @@ fn spawn_brick(
             sprite: TextureAtlasSprite::new(0), // always spawn a brick without a crack
             ..Default::default()
         },
+        ActiveEvents::COLLISION_EVENTS,
         RigidBody::Fixed,
         Collider::cuboid(HALF_TILE_SIZE * 3.0, HALF_TILE_SIZE * 3.0),
         Brick { resistance },
+        Health(100),
     ));
 }
 
@@ -29,8 +33,38 @@ pub fn spawn_bricks_array(mut commands: Commands, textures: ResMut<Textures>) {
                 &mut commands,
                 Vec2::new(i as f32 * TILE_SIZE * 3.0, j as f32 * TILE_SIZE * 3.0),
                 textures.sand.clone(),
-                1,
+                5,
             );
+        }
+    }
+}
+
+pub fn collision_handler(
+    mut commands: Commands,
+    mut collisions: EventReader<CollisionEvent>,
+    mut brick_query: Query<(&mut TextureAtlasSprite, &mut Health, &Brick)>,
+    mut ball_speed_query: Query<&mut Velocity, With<Ball>>,
+) {
+    for ev in collisions.iter() {
+        if let CollisionEvent::Started(ball_entity, brick_entity, _) = ev {
+            if let Ok((mut sprite, mut health, brick)) = brick_query.get_mut(*brick_entity) {
+                if let Ok(mut ball_speed) = ball_speed_query.get_mut(*ball_entity) {
+                    log::info!("Speed: {:?}", ball_speed);
+                    let sum_speed =
+                        (ball_speed.linvel.x.powi(2) + ball_speed.linvel.y.powi(2)).sqrt();
+                    log::info!("Sum speed: {:?}", sum_speed);
+                    log::info!("Health before: {:?}", health.0);
+                    health.0 -= (sum_speed / brick.resistance as f32) as i32;
+                    log::info!("Health after: {:?}", health.0);
+                    if health.0 <= 0 {
+                        commands.entity(*brick_entity).despawn();
+                    } else {
+                        sprite.index = ((100 - health.0) * 9 / 100) as usize;
+                    }
+                    ball_speed.linvel.y *= 0.8;
+                    ball_speed.linvel.x *= 0.8;
+                }
+            }
         }
     }
 }
