@@ -44,9 +44,9 @@ pub fn load_textures(
     let texture_handle: Handle<Image> = assets_server.load("sand_tiles.png");
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
-        Vec2::new(TILE_SIZE, TILE_SIZE),
-        9,
-        9,
+        Vec2::new(TILE_SIZE * 3.0, TILE_SIZE * 3.0),
+        3,
+        3,
         None,
         None,
     );
