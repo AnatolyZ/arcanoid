@@ -2,10 +2,8 @@ name: Linux (Ubuntu)
 run-name: ${{ github.actor }} builds "${{ github.event.head_commit.message }}"
 
 on:
-  push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
