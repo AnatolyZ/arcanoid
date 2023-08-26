@@ -14,7 +14,7 @@ impl Plugin for PlayAreaPlugin {
             TimerMode::Repeating,
         )))
         .insert_resource(LevelSelection::Index(0))
-        .add_systems(PostStartup, systems::load_ldtk_level)
+        .add_systems(PreStartup, systems::load_ldtk_level)
         .add_systems(
             Startup,
             (
