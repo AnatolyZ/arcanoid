@@ -2,6 +2,8 @@ use bevy::prelude::*;
 
 mod components;
 mod systems;
+
+pub use components::Platform;
 pub struct PlatformPlugin;
 
 impl Plugin for PlatformPlugin {
