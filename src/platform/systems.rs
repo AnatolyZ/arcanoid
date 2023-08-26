@@ -3,15 +3,22 @@ use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+const PLATFORM_DEFAULT_LENGTH: u32 = 6;
+const PLATFORM_FIRST_TILE: usize = 4;
+const PLATFORM_MIDDLE_TILE: usize = 5;
+const PLATFORM_LAST_TILE: usize = 6;
+
 pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures: Res<Textures>) {
     let window = windows.single();
 
-    commands
+    let platform_entity = commands
         .spawn((
-            Platform(),
+            Platform {
+                length: PLATFORM_DEFAULT_LENGTH,
+            },
             SpriteSheetBundle {
                 texture_atlas: textures.industrial.clone(),
-                sprite: TextureAtlasSprite::new(4),
+                sprite: TextureAtlasSprite::new(PLATFORM_FIRST_TILE),
                 transform: Transform::from_xyz(0.0, -window.height() / 2.0 + TILE_SIZE, 0.0),
                 ..Default::default()
             },
@@ -29,36 +36,40 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
             Ccd::enabled(),
             Restitution::new(0.2),
         ))
-        .with_children(|children| {
-            children.spawn((
+        .id();
+    for i in 1..PLATFORM_DEFAULT_LENGTH - 1 {
+        let middle_tile_entity = commands
+            .spawn((
                 SpriteSheetBundle {
                     texture_atlas: textures.industrial.clone(),
-                    sprite: TextureAtlasSprite::new(5),
-                    transform: Transform::from_xyz(TILE_SIZE, 0.0, 0.0),
+                    sprite: TextureAtlasSprite::new(PLATFORM_MIDDLE_TILE),
+                    transform: Transform::from_xyz(TILE_SIZE * i as f32, 0.0, 0.0),
                     ..Default::default()
                 },
                 Collider::cuboid(HALF_TILE_SIZE, HALF_TILE_SIZE - 3.0),
-            ));
-            children.spawn((
-                SpriteSheetBundle {
-                    texture_atlas: textures.industrial.clone(),
-                    sprite: TextureAtlasSprite::new(5),
-                    transform: Transform::from_xyz(TILE_SIZE * 2.0, 0.0, 0.0),
-                    ..Default::default()
-                },
-                Collider::cuboid(HALF_TILE_SIZE, HALF_TILE_SIZE - 3.0),
-            ));
-            children.spawn((
-                SpriteSheetBundle {
-                    texture_atlas: textures.industrial.clone(),
-                    sprite: TextureAtlasSprite::new(6),
-                    transform: Transform::from_xyz(TILE_SIZE * 3.0, 0.0, 0.0),
-                    ..Default::default()
-                },
-                Collider::cuboid(HALF_TILE_SIZE, HALF_TILE_SIZE - 3.0),
-                Restitution::new(0.2),
-            ));
-        });
+            ))
+            .id();
+        commands
+            .entity(platform_entity)
+            .add_child(middle_tile_entity);
+    }
+    let last_tile_entity = commands
+        .spawn((
+            SpriteSheetBundle {
+                texture_atlas: textures.industrial.clone(),
+                sprite: TextureAtlasSprite::new(PLATFORM_LAST_TILE),
+                transform: Transform::from_xyz(
+                    TILE_SIZE * (PLATFORM_DEFAULT_LENGTH - 1) as f32,
+                    0.0,
+                    0.0,
+                ),
+                ..Default::default()
+            },
+            Collider::cuboid(HALF_TILE_SIZE, HALF_TILE_SIZE - 3.0),
+            Restitution::new(0.2),
+        ))
+        .id();
+    commands.entity(platform_entity).add_child(last_tile_entity);
 }
 
 pub fn move_platform(
