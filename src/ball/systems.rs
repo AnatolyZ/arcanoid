@@ -89,7 +89,9 @@ pub fn launch_ball(
         if ball.lay_on_platform {
             let (platform_entity, platform_transform, platform_velocity, platform) =
                 platform_query.single_mut();
-            if keyboard_input.pressed(KeyCode::Up) {
+            if keyboard_input.just_pressed(KeyCode::Up)
+                || keyboard_input.just_pressed(KeyCode::Space)
+            {
                 ball.lay_on_platform = false;
                 velocity.linvel = Vec2::new(platform_velocity.linvel.x, 200.0);
                 ball_transform.translation.y =
