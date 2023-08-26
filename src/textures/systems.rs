@@ -8,6 +8,8 @@ pub fn load_textures(
 ) {
     let ball: Handle<Image> = assets_server.load("ball_red_small.png");
 
+    let background: Handle<Image> = assets_server.load("background.png");
+
     let texture_handle: Handle<Image> = assets_server.load("industrial_tiles.png");
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
@@ -65,6 +67,7 @@ pub fn load_textures(
 
     commands.insert_resource(Textures {
         ball,
+        background,
         industrial,
         marble,
         rock,
