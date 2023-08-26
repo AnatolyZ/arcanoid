@@ -19,7 +19,7 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
             SpriteSheetBundle {
                 texture_atlas: textures.industrial.clone(),
                 sprite: TextureAtlasSprite::new(PLATFORM_FIRST_TILE),
-                transform: Transform::from_xyz(0.0, -window.height() / 2.0 + TILE_SIZE, 0.0),
+                transform: Transform::from_xyz(0.0, -window.height() / 2.0 + TILE_SIZE, 1.0),
                 ..Default::default()
             },
             RigidBody::Dynamic,

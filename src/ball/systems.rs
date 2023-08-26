@@ -24,7 +24,7 @@ pub fn spawn_ball(
                 transform: Transform::from_xyz(
                     platform.length as f32 * TILE_SIZE / 2.0 - HALF_TILE_SIZE,
                     BALL_SPRITE_RADIUS + HALF_TILE_SIZE,
-                    0.0,
+                    3.0,
                 ),
                 ..Default::default()
             },
