@@ -14,7 +14,6 @@ impl Plugin for PlayAreaPlugin {
             TimerMode::Repeating,
         )))
         .insert_resource(LevelSelection::Index(0))
-        .add_systems(PreStartup, systems::load_ldtk_level)
         .add_systems(
             Startup,
             (
@@ -22,6 +21,7 @@ impl Plugin for PlayAreaPlugin {
                 systems::switch_off_gravity,
                 systems::spawn_borders,
                 systems::spawn_background,
+                systems::load_ldtk_level,
             ),
         )
         .add_systems(Update, systems::tick_animation);
