@@ -2,6 +2,7 @@ use super::components::Animation;
 use super::resources::AnimationTimer;
 use crate::textures::{HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
 
@@ -24,7 +25,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
 
     commands.spawn((
         Collider::cuboid(width / 2.0, HALF_TILE_SIZE - 4.0),
-        Transform::from_xyz(0.0, top, 0.0),
+        Transform::from_xyz(0.0, top, 2.0),
         GlobalTransform::default(),
         Friction {
             coefficient: 0.0,
@@ -33,7 +34,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
     commands.spawn((
         Collider::cuboid(width / 2.0, HALF_TILE_SIZE),
-        Transform::from_xyz(0.0, bottom - TILE_SIZE, 0.0),
+        Transform::from_xyz(0.0, bottom - TILE_SIZE, 2.0),
         GlobalTransform::default(),
         Friction {
             coefficient: 0.0,
@@ -42,7 +43,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
     commands.spawn((
         Collider::cuboid(HALF_TILE_SIZE - 4.0, height / 2.0),
-        Transform::from_xyz(left, 0.0, 0.0),
+        Transform::from_xyz(left, 0.0, 2.0),
         GlobalTransform::default(),
         Friction {
             coefficient: 0.0,
@@ -51,7 +52,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
     commands.spawn((
         Collider::cuboid(HALF_TILE_SIZE - 4.0, height / 2.0),
-        Transform::from_xyz(right, 0.0, 0.0),
+        Transform::from_xyz(right, 0.0, 2.0),
         GlobalTransform::default(),
         Friction {
             coefficient: 0.0,
@@ -89,20 +90,20 @@ pub fn spawn_background(
     commands.spawn(SpriteSheetBundle {
         texture_atlas: texture_atlas_handle.clone(),
         sprite: TextureAtlasSprite::new(76),
-        transform: Transform::from_xyz(left, top, 0.0),
+        transform: Transform::from_xyz(left, top, 2.0),
         ..Default::default()
     });
     commands.spawn(SpriteSheetBundle {
         texture_atlas: texture_atlas_handle.clone(),
         sprite: TextureAtlasSprite::new(77),
-        transform: Transform::from_xyz(right, top, 0.0),
+        transform: Transform::from_xyz(right, top, 2.0),
         ..Default::default()
     });
     commands.spawn((
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(78),
-            transform: Transform::from_xyz(left, bottom + TILE_SIZE, 1.0),
+            transform: Transform::from_xyz(left, bottom + TILE_SIZE, 2.0),
             ..Default::default()
         },
         Animation {
@@ -114,7 +115,7 @@ pub fn spawn_background(
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(78),
-            transform: Transform::from_xyz(right, bottom + TILE_SIZE, 1.0),
+            transform: Transform::from_xyz(right, bottom + TILE_SIZE, 2.0),
             ..Default::default()
         },
         Animation {
@@ -126,7 +127,7 @@ pub fn spawn_background(
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(94),
-            transform: Transform::from_xyz(left, bottom, 1.0),
+            transform: Transform::from_xyz(left, bottom, 2.0),
             ..Default::default()
         },
         Animation {
@@ -138,7 +139,7 @@ pub fn spawn_background(
         SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(94),
-            transform: Transform::from_xyz(right, bottom, 1.0),
+            transform: Transform::from_xyz(right, bottom, 2.0),
             ..Default::default()
         },
         Animation {
@@ -155,7 +156,7 @@ pub fn spawn_background(
         commands.spawn(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(sprite),
-            transform: Transform::from_xyz(x as f32, top, 0.0),
+            transform: Transform::from_xyz(x as f32, top, 2.0),
             ..Default::default()
         });
     }
@@ -165,7 +166,7 @@ pub fn spawn_background(
             SpriteSheetBundle {
                 texture_atlas: texture_atlas_handle.clone(),
                 sprite: TextureAtlasSprite::new(13),
-                transform: Transform::from_xyz(x as f32, bottom, 1.0),
+                transform: Transform::from_xyz(x as f32, bottom, 4.0),
                 ..Default::default()
             },
             Animation {
@@ -180,14 +181,14 @@ pub fn spawn_background(
         commands.spawn(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(sprite),
-            transform: Transform::from_xyz(left, y as f32, 0.0),
+            transform: Transform::from_xyz(left, y as f32, 2.0),
             ..Default::default()
         });
         let sprite = if rng.gen_range(0..15) == 0 { 91 } else { 75 };
         commands.spawn(SpriteSheetBundle {
             texture_atlas: texture_atlas_handle.clone(),
             sprite: TextureAtlasSprite::new(sprite),
-            transform: Transform::from_xyz(right, y as f32, 0.0),
+            transform: Transform::from_xyz(right, y as f32, 2.0),
             ..Default::default()
         });
     }
@@ -205,4 +206,12 @@ pub fn tick_animation(
             sprite.index = animation.sprites[animation.phase];
         }
     }
+}
+
+pub fn load_ldtk_level(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(LdtkWorldBundle {
+        ldtk_handle: asset_server.load("levels.ldtk"),
+        transform: Transform::from_xyz(-576.0, -324.0, 0.0),
+        ..Default::default()
+    });
 }

@@ -15,7 +15,7 @@ fn spawn_brick(
     commands.spawn((
         SpriteSheetBundle {
             texture_atlas: texture,
-            transform: Transform::from_xyz(coordinates.x, coordinates.y, 0.0),
+            transform: Transform::from_xyz(coordinates.x, coordinates.y, 3.0),
             sprite: TextureAtlasSprite::new(0), // always spawn a brick without a crack
             ..Default::default()
         },
