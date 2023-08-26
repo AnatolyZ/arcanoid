@@ -1,8 +1,10 @@
 use super::components::{Brick, Health};
 use crate::ball::Ball;
-use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
+use crate::textures::{resources::Textures, BRICK_TILE_SIZE, HALF_BRICK_TILE_SIZE, HALF_TILE_SIZE};
+use crate::{SCREEN_HEIGHT, SCREEN_WIDTH};
 use bevy::log;
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 fn spawn_brick(
@@ -30,17 +32,28 @@ fn spawn_brick(
     ));
 }
 
-pub fn spawn_bricks_array(mut commands: Commands, textures: ResMut<Textures>) {
-    for i in 0..3 {
-        for j in 0..3 {
-            spawn_brick(
-                &mut commands,
-                Vec2::new(i as f32 * TILE_SIZE * 3.0, j as f32 * TILE_SIZE * 3.0),
-                textures.sand.clone(),
-                5,
-                0.5,
-            );
-        }
+pub fn spawn_bricks_ldtk(
+    mut commands: Commands,
+    textures: ResMut<Textures>,
+    bricks_query: Query<(&IntGridCell, &Transform), Added<IntGridCell>>,
+) {
+    for (cell, coords) in bricks_query.iter() {
+        let texture = match cell.value {
+            1 => textures.sand.clone(),
+            2 => textures.stone.clone(),
+            3 => textures.rock.clone(),
+            _ => textures.marble.clone(),
+        };
+        spawn_brick(
+            &mut commands,
+            Vec2::new(
+                coords.translation.x - SCREEN_WIDTH / 2.0 + BRICK_TILE_SIZE + HALF_TILE_SIZE,
+                coords.translation.y - SCREEN_HEIGHT / 2.0 + HALF_BRICK_TILE_SIZE,
+            ),
+            texture,
+            3,
+            0.95,
+        );
     }
 }
 
