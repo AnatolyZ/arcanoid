@@ -7,6 +7,8 @@ pub const TILE_SIZE: f32 = 18.0;
 pub const HALF_TILE_SIZE: f32 = TILE_SIZE / 2.0;
 pub const BRICK_TILE_SIZE: f32 = TILE_SIZE * 3.0;
 pub const HALF_BRICK_TILE_SIZE: f32 = BRICK_TILE_SIZE / 2.0;
+pub const BACKGROUND_HEIGHT: f32 = 324.0;
+pub const BACKGROUND_WIDTH: f32 = 576.0;
 
 pub struct TexturesPlugin;
 

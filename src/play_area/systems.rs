@@ -1,7 +1,7 @@
 use super::components::Animation;
 use super::resources::AnimationTimer;
 use crate::{
-    textures::{self, HALF_TILE_SIZE, TILE_SIZE},
+    textures::{self, BACKGROUND_HEIGHT, BACKGROUND_WIDTH, HALF_TILE_SIZE, TILE_SIZE},
     SCREEN_HEIGHT, SCREEN_WIDTH,
 };
 use bevy::prelude::*;
@@ -65,14 +65,21 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
 }
 
-pub fn spawn_background(mut commands: Commands, textures: Res<Textures>, windows: Query<&Window>) {
-    let window = windows.single();
-    let width = window.width();
-    let height = window.height();
-    let left = -width / 2.0 + TILE_SIZE / 2.0;
-    let right = width / 2.0 - TILE_SIZE / 2.0;
-    let top = height / 2.0 - TILE_SIZE / 2.0;
-    let bottom = -height / 2.0 + TILE_SIZE / 2.0;
+pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
+    let left = -SCREEN_WIDTH / 2.0 + TILE_SIZE / 2.0;
+    let right = SCREEN_WIDTH / 2.0 - TILE_SIZE / 2.0;
+    let top = SCREEN_HEIGHT / 2.0 - TILE_SIZE / 2.0;
+    let bottom = -SCREEN_HEIGHT / 2.0 + TILE_SIZE / 2.0;
+
+    // draw background
+    let x_scale = SCREEN_WIDTH / BACKGROUND_WIDTH;
+    let y_scale = SCREEN_HEIGHT / BACKGROUND_HEIGHT;
+
+    commands.spawn(SpriteBundle {
+        texture: textures.background.clone(),
+        transform: Transform::from_xyz(0.0, 0.0, 0.0).with_scale(Vec3::new(x_scale, y_scale, 1.0)),
+        ..Default::default()
+    });
 
     commands.spawn(SpriteSheetBundle {
         texture_atlas: textures.industrial.clone(),
