@@ -10,6 +10,7 @@ fn spawn_brick(
     coordinates: Vec2,
     texture: Handle<TextureAtlas>,
     resistance: u8,
+    inhibition_rate: f32,
 ) {
     commands.spawn((
         SpriteSheetBundle {
@@ -21,7 +22,10 @@ fn spawn_brick(
         ActiveEvents::COLLISION_EVENTS,
         RigidBody::Fixed,
         Collider::cuboid(HALF_TILE_SIZE * 3.0, HALF_TILE_SIZE * 3.0),
-        Brick { resistance },
+        Brick {
+            resistance,
+            inhibition_rate,
+        },
         Health(100),
     ));
 }
@@ -34,6 +38,7 @@ pub fn spawn_bricks_array(mut commands: Commands, textures: ResMut<Textures>) {
                 Vec2::new(i as f32 * TILE_SIZE * 3.0, j as f32 * TILE_SIZE * 3.0),
                 textures.sand.clone(),
                 5,
+                0.5,
             );
         }
     }
@@ -59,11 +64,11 @@ pub fn collision_handler(
                     log::info!("Health after: {:?}", health.0);
                     if health.0 <= 0 {
                         commands.entity(*brick_entity).despawn();
+                        ball_speed.linvel.y *= brick.inhibition_rate;
+                        ball_speed.linvel.x *= brick.inhibition_rate;
                     } else {
                         sprite.index = ((100 - health.0) * 9 / 100) as usize;
                     }
-                    ball_speed.linvel.y *= 0.8;
-                    ball_speed.linvel.x *= 0.8;
                 }
             }
         }

@@ -4,10 +4,10 @@ mod systems;
 use bevy::prelude::*;
 pub use components::Ball;
 
-const MAX_X_SPEED: f32 = 400.0;
-const MAX_Y_SPEED: f32 = 400.0;
-const MIN_X_SPEED: f32 = 50.0;
-const MIM_Y_SPEED: f32 = 50.0;
+const MAX_X_SPEED: f32 = 300.0;
+const MAX_Y_SPEED: f32 = 300.0;
+const MIN_X_SPEED: f32 = 100.0;
+const MIM_Y_SPEED: f32 = 100.0;
 
 pub struct BallPlugin;
 
