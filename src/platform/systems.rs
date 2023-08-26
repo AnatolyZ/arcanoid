@@ -21,6 +21,10 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
                 impulse: Vec2::new(0.0, 0.0),
                 torque_impulse: 0.0,
             },
+            Velocity {
+                linvel: Vec2::new(0.0, 0.0),
+                angvel: 0.0,
+            },
             LockedAxes::ROTATION_LOCKED | LockedAxes::TRANSLATION_LOCKED_Y,
             Ccd::enabled(),
             Restitution::new(0.2),
