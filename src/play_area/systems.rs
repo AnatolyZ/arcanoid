@@ -1,13 +1,14 @@
 use super::components::Animation;
 use super::resources::AnimationTimer;
 use crate::{
-    textures::{HALF_TILE_SIZE, TILE_SIZE},
+    textures::{self, HALF_TILE_SIZE, TILE_SIZE},
     SCREEN_HEIGHT, SCREEN_WIDTH,
 };
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 use rand::Rng;
+use textures::resources::Textures;
 
 pub fn switch_off_gravity(mut rapier_config: ResMut<RapierConfiguration>) {
     rapier_config.gravity = Vec2::ZERO;
@@ -64,12 +65,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
 }
 
-pub fn spawn_background(
-    mut commands: Commands,
-    assets_server: Res<AssetServer>,
-    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    windows: Query<&Window>,
-) {
+pub fn spawn_background(mut commands: Commands, textures: Res<Textures>, windows: Query<&Window>) {
     let window = windows.single();
     let width = window.width();
     let height = window.height();
@@ -78,33 +74,21 @@ pub fn spawn_background(
     let top = height / 2.0 - TILE_SIZE / 2.0;
     let bottom = -height / 2.0 + TILE_SIZE / 2.0;
 
-    let texture_handle: Handle<Image> = assets_server.load("industrial_tiles.png");
-    let texture_atlas = TextureAtlas::from_grid(
-        texture_handle,
-        Vec2::new(TILE_SIZE, TILE_SIZE),
-        16,
-        7,
-        None,
-        None,
-    );
-
-    let texture_atlas_handle = texture_atlases.add(texture_atlas);
-
     commands.spawn(SpriteSheetBundle {
-        texture_atlas: texture_atlas_handle.clone(),
+        texture_atlas: textures.industrial.clone(),
         sprite: TextureAtlasSprite::new(76),
         transform: Transform::from_xyz(left, top, 2.0),
         ..Default::default()
     });
     commands.spawn(SpriteSheetBundle {
-        texture_atlas: texture_atlas_handle.clone(),
+        texture_atlas: textures.industrial.clone(),
         sprite: TextureAtlasSprite::new(77),
         transform: Transform::from_xyz(right, top, 2.0),
         ..Default::default()
     });
     commands.spawn((
         SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
+            texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(78),
             transform: Transform::from_xyz(left, bottom + TILE_SIZE, 2.0),
             ..Default::default()
@@ -116,7 +100,7 @@ pub fn spawn_background(
     ));
     commands.spawn((
         SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
+            texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(78),
             transform: Transform::from_xyz(right, bottom + TILE_SIZE, 2.0),
             ..Default::default()
@@ -128,7 +112,7 @@ pub fn spawn_background(
     ));
     commands.spawn((
         SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
+            texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(94),
             transform: Transform::from_xyz(left, bottom, 2.0),
             ..Default::default()
@@ -140,7 +124,7 @@ pub fn spawn_background(
     ));
     commands.spawn((
         SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
+            texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(94),
             transform: Transform::from_xyz(right, bottom, 2.0),
             ..Default::default()
@@ -157,7 +141,7 @@ pub fn spawn_background(
     for x in (left as i32 + TILE_SIZE as i32..right as i32).step_by(TILE_SIZE as usize) {
         let sprite = if rng.gen_range(0..15) == 0 { 110 } else { 109 };
         commands.spawn(SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
+            texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(sprite),
             transform: Transform::from_xyz(x as f32, top, 2.0),
             ..Default::default()
@@ -167,7 +151,7 @@ pub fn spawn_background(
     for x in (left as i32 + TILE_SIZE as i32..right as i32).step_by(TILE_SIZE as usize) {
         commands.spawn((
             SpriteSheetBundle {
-                texture_atlas: texture_atlas_handle.clone(),
+                texture_atlas: textures.industrial.clone(),
                 sprite: TextureAtlasSprite::new(13),
                 transform: Transform::from_xyz(x as f32, bottom, 4.0),
                 ..Default::default()
@@ -182,14 +166,14 @@ pub fn spawn_background(
     for y in (bottom as i32 + (TILE_SIZE * 2.0) as i32..top as i32).step_by(TILE_SIZE as usize) {
         let sprite = if rng.gen_range(0..15) == 0 { 91 } else { 75 };
         commands.spawn(SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
+            texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(sprite),
             transform: Transform::from_xyz(left, y as f32, 2.0),
             ..Default::default()
         });
         let sprite = if rng.gen_range(0..15) == 0 { 91 } else { 75 };
         commands.spawn(SpriteSheetBundle {
-            texture_atlas: texture_atlas_handle.clone(),
+            texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(sprite),
             transform: Transform::from_xyz(right, y as f32, 2.0),
             ..Default::default()
