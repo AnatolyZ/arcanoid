@@ -13,7 +13,7 @@ pub struct BallPlugin;
 
 impl Plugin for BallPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Startup, systems::spawn_ball)
-            .add_systems(Update, systems::confine_ball_speed);
+        app.add_systems(PostStartup, systems::spawn_ball)
+            .add_systems(Update, (systems::confine_ball_speed, systems::launch_ball));
     }
 }
