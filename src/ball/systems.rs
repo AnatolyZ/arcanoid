@@ -10,9 +10,9 @@ const BALL_SPRITE_RADIUS: f32 = 16.0;
 pub fn spawn_ball(
     mut commands: Commands,
     textures: Res<Textures>,
-    platform_entity_query: Query<Entity, With<Platform>>,
+    platform_entity_query: Query<(Entity, &Platform)>,
 ) {
-    let platform_entity = platform_entity_query.single();
+    let (platform_entity, platform) = platform_entity_query.single();
     let ball_entity = commands
         .spawn((
             Ball {
@@ -22,7 +22,7 @@ pub fn spawn_ball(
             SpriteBundle {
                 texture: textures.ball.clone(),
                 transform: Transform::from_xyz(
-                    TILE_SIZE * 2.0,
+                    platform.length as f32 * TILE_SIZE / 2.0 - HALF_TILE_SIZE,
                     BALL_SPRITE_RADIUS + HALF_TILE_SIZE,
                     0.0,
                 ),
@@ -82,19 +82,20 @@ pub fn confine_ball_speed(mut query: Query<&mut Velocity, With<Ball>>) {
 pub fn launch_ball(
     mut commands: Commands,
     mut ball_query: Query<(Entity, &mut Velocity, &mut Transform, &mut Ball)>,
-    mut platform_query: Query<(Entity, &Transform, &Velocity), (With<Platform>, Without<Ball>)>,
+    mut platform_query: Query<(Entity, &Transform, &Velocity, &Platform), Without<Ball>>,
     keyboard_input: Res<Input<KeyCode>>,
 ) {
     for (ball_entity, mut velocity, mut ball_transform, mut ball) in ball_query.iter_mut() {
         if ball.lay_on_platform {
-            let (platform_entity, platform_transform, platform_velocity) =
+            let (platform_entity, platform_transform, platform_velocity, platform) =
                 platform_query.single_mut();
             if keyboard_input.pressed(KeyCode::Up) {
                 ball.lay_on_platform = false;
                 velocity.linvel = Vec2::new(platform_velocity.linvel.x, 200.0);
                 ball_transform.translation.y =
                     platform_transform.translation.y + ball.radius + HALF_TILE_SIZE;
-                ball_transform.translation.x = platform_transform.translation.x + TILE_SIZE * 2.0;
+                ball_transform.translation.x = platform_transform.translation.x - HALF_TILE_SIZE
+                    + platform.length as f32 * TILE_SIZE / 2.0;
                 commands
                     .entity(platform_entity)
                     .remove_children(&vec![ball_entity]);
