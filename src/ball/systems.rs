@@ -1,29 +1,48 @@
 use super::{components::Ball, MAX_X_SPEED, MAX_Y_SPEED, MIM_Y_SPEED, MIN_X_SPEED};
+use crate::platform::Platform;
 use crate::textures::resources::Textures;
+use crate::textures::{HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-pub fn spawn_ball(mut commands: Commands, textures: Res<Textures>) {
-    commands.spawn((
-        Ball(),
-        SpriteBundle {
-            texture: textures.ball.clone(),
-            transform: Transform::from_xyz(0.0, 0.0, 0.0),
-            ..Default::default()
-        },
-        RigidBody::Dynamic,
-        Collider::ball(16.0),
-        Velocity {
-            linvel: Vec2::new(4.0, 4.0),
-            angvel: 0.4,
-        },
-        ExternalImpulse {
-            impulse: Vec2::new(0.0, -8.0),
-            torque_impulse: 0.0,
-        },
-        Ccd::enabled(),
-        Restitution::new(2.0),
-    ));
+const BALL_SPRITE_RADIUS: f32 = 16.0;
+
+pub fn spawn_ball(
+    mut commands: Commands,
+    textures: Res<Textures>,
+    platform_entity_query: Query<Entity, With<Platform>>,
+) {
+    let platform_entity = platform_entity_query.single();
+    let ball_entity = commands
+        .spawn((
+            Ball {
+                radius: BALL_SPRITE_RADIUS,
+                lay_on_platform: true,
+            },
+            SpriteBundle {
+                texture: textures.ball.clone(),
+                transform: Transform::from_xyz(
+                    TILE_SIZE * 2.0,
+                    BALL_SPRITE_RADIUS + HALF_TILE_SIZE,
+                    0.0,
+                ),
+                ..Default::default()
+            },
+            RigidBody::Dynamic,
+            Collider::ball(BALL_SPRITE_RADIUS),
+            Velocity {
+                linvel: Vec2::new(0.0, 0.0),
+                angvel: 0.0,
+            },
+            ExternalImpulse {
+                impulse: Vec2::new(0.0, 0.0),
+                torque_impulse: 0.0,
+            },
+            Ccd::enabled(),
+            Restitution::new(2.0),
+        ))
+        .id();
+    commands.entity(platform_entity).add_child(ball_entity);
 }
 
 pub fn confine_ball_speed(mut query: Query<&mut Velocity, With<Ball>>) {
@@ -56,6 +75,30 @@ pub fn confine_ball_speed(mut query: Query<&mut Velocity, With<Ball>>) {
         }
         if force.linvel.y < 0.0 && force.linvel.y > -MIM_Y_SPEED {
             force.linvel.y = -MIM_Y_SPEED;
+        }
+    }
+}
+
+pub fn launch_ball(
+    mut commands: Commands,
+    mut ball_query: Query<(Entity, &mut Velocity, &mut Transform, &mut Ball)>,
+    mut platform_query: Query<(Entity, &Transform, &Velocity), (With<Platform>, Without<Ball>)>,
+    keyboard_input: Res<Input<KeyCode>>,
+) {
+    for (ball_entity, mut velocity, mut ball_transform, mut ball) in ball_query.iter_mut() {
+        if ball.lay_on_platform {
+            let (platform_entity, platform_transform, platform_velocity) =
+                platform_query.single_mut();
+            if keyboard_input.pressed(KeyCode::Up) {
+                ball.lay_on_platform = false;
+                velocity.linvel = Vec2::new(platform_velocity.linvel.x, 200.0);
+                ball_transform.translation.y =
+                    platform_transform.translation.y + ball.radius + HALF_TILE_SIZE;
+                ball_transform.translation.x = platform_transform.translation.x + TILE_SIZE * 2.0;
+                commands
+                    .entity(platform_entity)
+                    .remove_children(&vec![ball_entity]);
+            }
         }
     }
 }
