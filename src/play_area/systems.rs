@@ -1,6 +1,9 @@
 use super::components::Animation;
 use super::resources::AnimationTimer;
-use crate::textures::{HALF_TILE_SIZE, TILE_SIZE};
+use crate::{
+    textures::{HALF_TILE_SIZE, TILE_SIZE},
+    SCREEN_HEIGHT, SCREEN_WIDTH,
+};
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
@@ -211,7 +214,7 @@ pub fn tick_animation(
 pub fn load_ldtk_level(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(LdtkWorldBundle {
         ldtk_handle: asset_server.load("levels.ldtk"),
-        transform: Transform::from_xyz(-576.0, -324.0, 0.0),
+        transform: Transform::from_xyz(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, 0.0),
         ..Default::default()
     });
 }
