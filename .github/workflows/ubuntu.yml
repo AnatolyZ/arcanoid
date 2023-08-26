@@ -1,5 +1,5 @@
 name: Linux (Ubuntu)
-run-name: ${{ github.actor }} builds "${{ github.event.head_commit.message }}"
+run-name: ${{ github.actor }} wants to merge "${{ github.event.pull_request.title }}"
 
 on:
   pull_request:
