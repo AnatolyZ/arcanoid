@@ -5,6 +5,7 @@ mod play_area;
 mod textures;
 
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use ball::BallPlugin;
@@ -19,11 +20,12 @@ fn main() {
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
                     title: "Arcanoid".into(),
-                    resolution: (TILE_SIZE * 40.0, TILE_SIZE * 30.0).into(),
+                    resolution: (TILE_SIZE * 64.0, TILE_SIZE * 36.0).into(),
                     ..default()
                 }),
                 ..default()
             }),
+            LdtkPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
             PlatformPlugin,
             BallPlugin,

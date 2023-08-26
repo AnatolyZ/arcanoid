@@ -3,6 +3,7 @@ mod resources;
 mod systems;
 
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 
 pub struct PlayAreaPlugin;
 
@@ -12,6 +13,8 @@ impl Plugin for PlayAreaPlugin {
             1.0,
             TimerMode::Repeating,
         )))
+        .insert_resource(LevelSelection::Index(0))
+        .add_systems(PostStartup, systems::load_ldtk_level)
         .add_systems(
             Startup,
             (
