@@ -47,6 +47,7 @@ pub fn collision_handler(
 ) {
     for ev in collisions.iter() {
         if let CollisionEvent::Started(ball_entity, brick_entity, _) = ev {
+            log::info!("Collision detected!");
             if let Ok((mut sprite, mut health, brick)) = brick_query.get_mut(*brick_entity) {
                 if let Ok(mut ball_speed) = ball_speed_query.get_mut(*ball_entity) {
                     log::info!("Speed: {:?}", ball_speed);
