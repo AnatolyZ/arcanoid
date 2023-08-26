@@ -1,4 +1,4 @@
-use super::{resources::Textures, TILE_SIZE};
+use super::{resources::Textures, BRICK_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
 
 pub fn load_textures(
@@ -22,7 +22,7 @@ pub fn load_textures(
     let texture_handle: Handle<Image> = assets_server.load("marble_tiles.png");
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
-        Vec2::new(TILE_SIZE, TILE_SIZE),
+        Vec2::new(BRICK_TILE_SIZE, BRICK_TILE_SIZE),
         9,
         9,
         None,
@@ -33,7 +33,7 @@ pub fn load_textures(
     let texture_handle: Handle<Image> = assets_server.load("rock_tiles.png");
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
-        Vec2::new(TILE_SIZE, TILE_SIZE),
+        Vec2::new(BRICK_TILE_SIZE, BRICK_TILE_SIZE),
         9,
         9,
         None,
@@ -44,7 +44,7 @@ pub fn load_textures(
     let texture_handle: Handle<Image> = assets_server.load("sand_tiles.png");
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
-        Vec2::new(TILE_SIZE * 3.0, TILE_SIZE * 3.0),
+        Vec2::new(BRICK_TILE_SIZE, BRICK_TILE_SIZE),
         3,
         3,
         None,
@@ -55,7 +55,7 @@ pub fn load_textures(
     let texture_handle: Handle<Image> = assets_server.load("stone_tiles.png");
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
-        Vec2::new(TILE_SIZE, TILE_SIZE),
+        Vec2::new(BRICK_TILE_SIZE, BRICK_TILE_SIZE),
         9,
         9,
         None,
