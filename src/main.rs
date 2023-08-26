@@ -14,13 +14,18 @@ use platform::PlatformPlugin;
 use play_area::PlayAreaPlugin;
 use textures::{TexturesPlugin, TILE_SIZE};
 
+pub const SCREEN_HEIGHT_TILES: f32 = 36.0; // height of the game window in tiles
+pub const SCREEN_WIDTH_TILES: f32 = 64.0; // width of the game window in tiles
+pub const SCREEN_HEIGHT: f32 = SCREEN_HEIGHT_TILES * TILE_SIZE; // height of the game window in pixels
+pub const SCREEN_WIDTH: f32 = SCREEN_WIDTH_TILES * TILE_SIZE; // width of the game window in pixels
+
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
                     title: "Arcanoid".into(),
-                    resolution: (TILE_SIZE * 64.0, TILE_SIZE * 36.0).into(),
+                    resolution: (SCREEN_WIDTH, SCREEN_HEIGHT).into(),
                     ..default()
                 }),
                 ..default()
