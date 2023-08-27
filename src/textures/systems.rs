@@ -25,8 +25,8 @@ pub fn load_textures(
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
         Vec2::new(BRICK_TILE_SIZE, BRICK_TILE_SIZE),
-        9,
-        9,
+        3,
+        3,
         None,
         None,
     );
@@ -36,8 +36,8 @@ pub fn load_textures(
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
         Vec2::new(BRICK_TILE_SIZE, BRICK_TILE_SIZE),
-        9,
-        9,
+        3,
+        3,
         None,
         None,
     );
@@ -58,8 +58,8 @@ pub fn load_textures(
     let texture_atlas = TextureAtlas::from_grid(
         texture_handle,
         Vec2::new(BRICK_TILE_SIZE, BRICK_TILE_SIZE),
-        9,
-        9,
+        3,
+        3,
         None,
         None,
     );
