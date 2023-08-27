@@ -196,7 +196,7 @@ pub fn tick_animation(
     if timer.0.tick(time.delta()).just_finished() {
         for (mut animation, mut sprite) in query.iter_mut() {
             animation.phase += 1;
-            animation.phase = animation.phase % animation.sprites.len();
+            animation.phase %= animation.sprites.len();
             sprite.index = animation.sprites[animation.phase];
         }
     }

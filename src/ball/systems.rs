@@ -100,7 +100,7 @@ pub fn launch_ball(
                     + platform.length as f32 * TILE_SIZE / 2.0;
                 commands
                     .entity(platform_entity)
-                    .remove_children(&vec![ball_entity]);
+                    .remove_children(&[ball_entity]);
             }
         }
     }
