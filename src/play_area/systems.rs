@@ -205,7 +205,7 @@ pub fn tick_animation(
 pub fn load_ldtk_level(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(LdtkWorldBundle {
         ldtk_handle: asset_server.load("levels.ldtk"),
-        transform: Transform::from_xyz(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, 0.0),
+        transform: Transform::from_xyz(-SCREEN_WIDTH / 2.0, -SCREEN_HEIGHT / 2.0, 0.0),
         ..Default::default()
     });
 }

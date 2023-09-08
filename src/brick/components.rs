@@ -1,10 +1,80 @@
 use bevy::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
+use bevy_rapier2d::prelude::*;
 
-#[derive(Component)]
+#[derive(Default)]
+pub enum BrickType {
+    #[default]
+    Sand,
+    Stone,
+    Rock,
+    Marble,
+}
+
+#[derive(Default, Component, LdtkIntCell)]
 pub struct Brick {
     pub resistance: u8,
     pub inhibition_rate: f32,
+    pub brick_type: BrickType,
+    pub health: Health,
 }
 
-#[derive(Component)]
+#[derive(Default, Component)]
 pub struct Health(pub i32); // Health of the brick in percentage
+
+#[derive(Bundle, LdtkIntCell)]
+pub struct BrickBundle {
+    #[from_int_grid_cell]
+    pub brick: Brick,
+    #[from_int_grid_cell]
+    pub collider_bundle: ColliderBundle,
+}
+
+#[derive(Bundle, LdtkIntCell)]
+pub struct ColliderBundle {
+    pub collider: Collider,
+    pub rigid_body: RigidBody,
+    pub active_events: ActiveEvents,
+}
+
+impl From<IntGridCell> for ColliderBundle {
+    fn from(_cell: IntGridCell) -> Self {
+        Self {
+            collider: Collider::cuboid(26., 26.),
+            rigid_body: RigidBody::Fixed,
+            active_events: ActiveEvents::COLLISION_EVENTS,
+        }
+    }
+}
+
+impl From<IntGridCell> for Brick {
+    fn from(int_grid_cell: IntGridCell) -> Brick {
+        match int_grid_cell.value {
+            1 => Brick {
+                resistance: 3,
+                inhibition_rate: 1.,
+                brick_type: BrickType::Sand,
+                health: Health(100),
+            },
+            2 => Brick {
+                resistance: 5,
+                inhibition_rate: 1.,
+                brick_type: BrickType::Stone,
+                health: Health(100),
+            },
+            3 => Brick {
+                resistance: 7,
+                inhibition_rate: 1.,
+                brick_type: BrickType::Rock,
+                health: Health(100),
+            },
+            4 => Brick {
+                resistance: 10,
+                inhibition_rate: 1.,
+                brick_type: BrickType::Marble,
+                health: Health(100),
+            },
+            _ => Brick::default(),
+        }
+    }
+}
