@@ -1,3 +1,4 @@
+use crate::textures::HALF_BRICK_TILE_SIZE;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
@@ -40,7 +41,7 @@ pub struct ColliderBundle {
 impl From<IntGridCell> for ColliderBundle {
     fn from(_cell: IntGridCell) -> Self {
         Self {
-            collider: Collider::cuboid(26., 26.),
+            collider: Collider::cuboid(HALF_BRICK_TILE_SIZE, HALF_BRICK_TILE_SIZE),
             rigid_body: RigidBody::Fixed,
             active_events: ActiveEvents::COLLISION_EVENTS,
         }
