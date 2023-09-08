@@ -7,7 +7,6 @@ use crate::{
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
-use rand::Rng;
 use textures::resources::Textures;
 
 pub fn switch_off_gravity(mut rapier_config: ResMut<RapierConfiguration>) {
@@ -22,41 +21,41 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     let window = windows.single();
     let width = window.width();
     let height = window.height();
-    let left = -width / 2.0 + TILE_SIZE / 2.0;
-    let right = width / 2.0 - TILE_SIZE / 2.0;
+    let left = -width / 2.0 + TILE_SIZE / 2.0 + TILE_SIZE * 6.0;
+    let right = width / 2.0 - TILE_SIZE / 2.0 - TILE_SIZE * 6.0;
     let top = height / 2.0 - TILE_SIZE / 2.0;
     let bottom = -height / 2.0 + TILE_SIZE / 2.0;
 
     commands.spawn((
-        Collider::cuboid(width / 2.0, HALF_TILE_SIZE - 4.0),
+        Collider::cuboid(width / 2.0, HALF_TILE_SIZE),
         Transform::from_xyz(0.0, top, 2.0),
         GlobalTransform::default(),
         Friction {
+            coefficient: 0.1,
+            combine_rule: CoefficientCombineRule::Min,
+        },
+    ));
+    commands.spawn((
+        Collider::cuboid(HALF_TILE_SIZE, height / 2.0),
+        Transform::from_xyz(right, 0.0, 2.0),
+        GlobalTransform::default(),
+        Friction {
             coefficient: 0.0,
+            combine_rule: CoefficientCombineRule::Min,
+        },
+    ));
+    commands.spawn((
+        Collider::cuboid(HALF_TILE_SIZE, height / 2.0),
+        Transform::from_xyz(left, 0.0, 2.0),
+        GlobalTransform::default(),
+        Friction {
+            coefficient: 0.1,
             combine_rule: CoefficientCombineRule::Min,
         },
     ));
     commands.spawn((
         Collider::cuboid(width / 2.0, HALF_TILE_SIZE),
         Transform::from_xyz(0.0, bottom - TILE_SIZE, 2.0),
-        GlobalTransform::default(),
-        Friction {
-            coefficient: 0.0,
-            combine_rule: CoefficientCombineRule::Min,
-        },
-    ));
-    commands.spawn((
-        Collider::cuboid(HALF_TILE_SIZE - 4.0, height / 2.0),
-        Transform::from_xyz(left, 0.0, 2.0),
-        GlobalTransform::default(),
-        Friction {
-            coefficient: 0.0,
-            combine_rule: CoefficientCombineRule::Min,
-        },
-    ));
-    commands.spawn((
-        Collider::cuboid(HALF_TILE_SIZE - 4.0, height / 2.0),
-        Transform::from_xyz(right, 0.0, 2.0),
         GlobalTransform::default(),
         Friction {
             coefficient: 0.0,
@@ -142,19 +141,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         },
     ));
 
-    let mut rng = rand::thread_rng();
-
-    // draw the top row
-    for x in (left as i32 + TILE_SIZE as i32..right as i32).step_by(TILE_SIZE as usize) {
-        let sprite = if rng.gen_range(0..15) == 0 { 110 } else { 109 };
-        commands.spawn(SpriteSheetBundle {
-            texture_atlas: textures.industrial.clone(),
-            sprite: TextureAtlasSprite::new(sprite),
-            transform: Transform::from_xyz(x as f32, top, 2.0),
-            ..Default::default()
-        });
-    }
-    // draw the bottom row
     for x in (left as i32 + TILE_SIZE as i32..right as i32).step_by(TILE_SIZE as usize) {
         commands.spawn((
             SpriteSheetBundle {
@@ -168,23 +154,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
                 sprites: vec![13, 29],
             },
         ));
-    }
-    // draw sides
-    for y in (bottom as i32 + (TILE_SIZE * 2.0) as i32..top as i32).step_by(TILE_SIZE as usize) {
-        let sprite = if rng.gen_range(0..15) == 0 { 91 } else { 75 };
-        commands.spawn(SpriteSheetBundle {
-            texture_atlas: textures.industrial.clone(),
-            sprite: TextureAtlasSprite::new(sprite),
-            transform: Transform::from_xyz(left, y as f32, 2.0),
-            ..Default::default()
-        });
-        let sprite = if rng.gen_range(0..15) == 0 { 91 } else { 75 };
-        commands.spawn(SpriteSheetBundle {
-            texture_atlas: textures.industrial.clone(),
-            sprite: TextureAtlasSprite::new(sprite),
-            transform: Transform::from_xyz(right, y as f32, 2.0),
-            ..Default::default()
-        });
     }
 }
 

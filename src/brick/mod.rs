@@ -8,10 +8,10 @@ pub struct BricksPlugin;
 
 impl Plugin for BricksPlugin {
     fn build(&self, app: &mut App) {
-        app.register_ldtk_int_cell::<components::BrickBundle>(1)
-            .register_ldtk_int_cell::<components::BrickBundle>(2)
-            .register_ldtk_int_cell::<components::BrickBundle>(3)
-            .register_ldtk_int_cell::<components::BrickBundle>(4)
+        app.register_ldtk_int_cell_for_layer::<components::BrickBundle>("Bricks", 1)
+            .register_ldtk_int_cell_for_layer::<components::BrickBundle>("Bricks", 2)
+            .register_ldtk_int_cell_for_layer::<components::BrickBundle>("Bricks", 3)
+            .register_ldtk_int_cell_for_layer::<components::BrickBundle>("Bricks", 4)
             .add_systems(Update, systems::add_brick_textures)
             .add_systems(Update, systems::collision_handler);
     }
