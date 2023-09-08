@@ -8,6 +8,7 @@ use bevy_rapier2d::prelude::*;
 const BALL_SPRITE_RADIUS: f32 = 16.0;
 const MAX_SPEED: f32 = 500.0;
 const MIN_SPEED: f32 = 300.0;
+const MIN_Y_SPEED: f32 = 50.0;
 
 pub fn spawn_ball(
     mut commands: Commands,
@@ -59,6 +60,10 @@ pub fn confine_ball_speed(mut query: Query<(&mut Velocity, &Ball)>) {
         //confine min speed
         if speed < MIN_SPEED && !ball.lay_on_platform {
             velocity.linvel = velocity.linvel.normalize() * MIN_SPEED;
+        }
+        //prevent ball from getting stuck between walls
+        if velocity.linvel.y.abs() < MIN_Y_SPEED {
+            velocity.linvel.y = MIN_Y_SPEED * velocity.linvel.y.signum();
         }
     }
 }
