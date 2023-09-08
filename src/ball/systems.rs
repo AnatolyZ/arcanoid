@@ -1,4 +1,4 @@
-use super::{components::Ball, MAX_X_SPEED, MAX_Y_SPEED, MIM_Y_SPEED, MIN_X_SPEED};
+use super::components::Ball;
 use crate::platform::Platform;
 use crate::textures::resources::Textures;
 use crate::textures::{HALF_TILE_SIZE, TILE_SIZE};
@@ -6,6 +6,8 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 const BALL_SPRITE_RADIUS: f32 = 16.0;
+const MAX_SPEED: f32 = 500.0;
+const MIN_SPEED: f32 = 300.0;
 
 pub fn spawn_ball(
     mut commands: Commands,
@@ -45,36 +47,18 @@ pub fn spawn_ball(
     commands.entity(platform_entity).add_child(ball_entity);
 }
 
-pub fn confine_ball_speed(mut query: Query<&mut Velocity, With<Ball>>) {
-    for mut binding in query.iter_mut() {
-        let force = binding.as_mut();
+pub fn confine_ball_speed(mut query: Query<(&mut Velocity, &Ball)>) {
+    for (mut binding, ball) in query.iter_mut() {
+        let velocity = binding.as_mut();
+        let speed = velocity.linvel.length();
 
         //Confine max speed
-        if force.linvel.x > MAX_X_SPEED {
-            force.linvel.x = MAX_X_SPEED;
+        if speed > MAX_SPEED && !ball.lay_on_platform {
+            velocity.linvel = velocity.linvel.normalize() * MAX_SPEED;
         }
-        if force.linvel.x < -MAX_X_SPEED {
-            force.linvel.x = -MAX_X_SPEED;
-        }
-        if force.linvel.y > MAX_Y_SPEED {
-            force.linvel.y = MAX_Y_SPEED;
-        }
-        if force.linvel.y < -MAX_Y_SPEED {
-            force.linvel.y = -MAX_Y_SPEED;
-        }
-
-        //Confine min speed
-        if force.linvel.x > 0.0 && force.linvel.x < MIN_X_SPEED {
-            force.linvel.x = MIN_X_SPEED;
-        }
-        if force.linvel.x < 0.0 && force.linvel.x > -MIN_X_SPEED {
-            force.linvel.x = -MIN_X_SPEED;
-        }
-        if force.linvel.y > 0.0 && force.linvel.y < MIM_Y_SPEED {
-            force.linvel.y = MIM_Y_SPEED;
-        }
-        if force.linvel.y < 0.0 && force.linvel.y > -MIM_Y_SPEED {
-            force.linvel.y = -MIM_Y_SPEED;
+        //confine min speed
+        if speed < MIN_SPEED && !ball.lay_on_platform {
+            velocity.linvel = velocity.linvel.normalize() * MIN_SPEED;
         }
     }
 }
