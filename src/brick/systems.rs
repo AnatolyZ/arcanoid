@@ -1,4 +1,4 @@
-use super::components::{Brick, BrickType, Health};
+use super::components::{Brick, BrickType};
 use crate::ball::Ball;
 use crate::textures::{resources::Textures, HALF_BRICK_TILE_SIZE};
 use bevy::log;
