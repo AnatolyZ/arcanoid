@@ -4,6 +4,7 @@ use crate::textures::{resources::Textures, HALF_BRICK_TILE_SIZE};
 use bevy::log;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
+use rand::Rng;
 
 pub fn add_brick_textures(
     mut commands: Commands,
@@ -64,8 +65,11 @@ pub fn collision_handler(
             log::info!("Health after: {:?}", brick.health.0);
             if brick.health.0 <= 0 {
                 commands.entity(brick_entity).despawn();
-                ball_speed.linvel.y *= brick.inhibition_rate;
-                ball_speed.linvel.x *= brick.inhibition_rate;
+                ball_speed.linvel *= brick.inhibition_rate;
+                let rotate = Rng::gen_range(&mut rand::thread_rng(), 0..=10);
+                ball_speed.linvel = Vec2::new(1.0, 0.1 - 0.02 * rotate as f32)
+                    .normalize()
+                    .rotate(ball_speed.linvel);
             } else {
                 sprite.index = ((100 - brick.health.0) * 9 / 100) as usize;
             }
