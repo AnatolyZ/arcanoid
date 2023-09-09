@@ -62,7 +62,7 @@ pub fn confine_ball_speed(mut query: Query<(&mut Velocity, &Ball)>) {
             velocity.linvel = velocity.linvel.normalize() * MIN_SPEED;
         }
         //prevent ball from getting stuck between walls
-        if velocity.linvel.y.abs() < MIN_Y_SPEED {
+        if velocity.linvel.y.abs() < MIN_Y_SPEED && !ball.lay_on_platform {
             velocity.linvel.y = MIN_Y_SPEED * velocity.linvel.y.signum();
         }
     }
