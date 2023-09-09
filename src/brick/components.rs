@@ -58,19 +58,19 @@ impl From<IntGridCell> for Brick {
                 health: Health(100),
             },
             2 => Brick {
-                resistance: 5,
+                resistance: 8,
                 inhibition_rate: 1.,
                 brick_type: BrickType::Stone,
                 health: Health(100),
             },
             3 => Brick {
-                resistance: 7,
+                resistance: 15,
                 inhibition_rate: 1.,
                 brick_type: BrickType::Rock,
                 health: Health(100),
             },
             4 => Brick {
-                resistance: 10,
+                resistance: 25,
                 inhibition_rate: 1.,
                 brick_type: BrickType::Marble,
                 health: Health(100),
