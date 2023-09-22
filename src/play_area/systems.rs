@@ -162,7 +162,7 @@ pub fn tick_animation(
     mut timer: ResMut<AnimationTimer>,
     mut query: Query<(&mut Animation, &mut TextureAtlasSprite)>,
 ) {
-    if timer.0.tick(time.delta()).just_finished() {
+    if timer.tick(time.delta()).just_finished() {
         for (mut animation, mut sprite) in query.iter_mut() {
             animation.phase += 1;
             animation.phase %= animation.sprites.len();
