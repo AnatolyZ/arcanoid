@@ -2,6 +2,7 @@ mod ball;
 mod brick;
 mod platform;
 mod play_area;
+mod states;
 mod textures;
 
 use bevy::prelude::*;
@@ -12,6 +13,8 @@ use ball::BallPlugin;
 use brick::BricksPlugin;
 use platform::PlatformPlugin;
 use play_area::PlayAreaPlugin;
+use states::GameState;
+use states::StatesPlugin;
 use textures::{TexturesPlugin, TILE_SIZE};
 
 pub const SCREEN_HEIGHT_TILES: f32 = 36.0; // height of the game window in tiles
@@ -21,6 +24,7 @@ pub const SCREEN_WIDTH: f32 = SCREEN_WIDTH_TILES * TILE_SIZE; // width of the ga
 
 fn main() {
     App::new()
+        .add_state::<GameState>()
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
@@ -36,6 +40,7 @@ fn main() {
             BallPlugin,
             BricksPlugin,
             PlayAreaPlugin,
+            StatesPlugin,
             TexturesPlugin,
             //RapierDebugRenderPlugin::default(),
         ))

@@ -2,6 +2,7 @@ mod components;
 mod resources;
 mod systems;
 
+use crate::states::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
@@ -24,6 +25,9 @@ impl Plugin for PlayAreaPlugin {
                 systems::load_ldtk_level,
             ),
         )
-        .add_systems(Update, systems::tick_animation);
+        .add_systems(
+            Update,
+            systems::tick_animation.run_if(in_state(GameState::Game)),
+        );
     }
 }
