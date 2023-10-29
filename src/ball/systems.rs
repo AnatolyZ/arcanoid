@@ -1,52 +1,12 @@
 use super::components::Ball;
 use crate::platform::Platform;
-use crate::textures::resources::Textures;
 use crate::textures::{HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-const BALL_SPRITE_RADIUS: f32 = 16.0;
 const MAX_SPEED: f32 = 500.0;
 const MIN_SPEED: f32 = 300.0;
 const MIN_Y_SPEED: f32 = 50.0;
-
-pub fn spawn_ball(
-    mut commands: Commands,
-    textures: Res<Textures>,
-    platform_entity_query: Query<(Entity, &Platform)>,
-) {
-    let (platform_entity, platform) = platform_entity_query.single();
-    let ball_entity = commands
-        .spawn((
-            Ball {
-                radius: BALL_SPRITE_RADIUS,
-                lay_on_platform: true,
-            },
-            SpriteBundle {
-                texture: textures.ball.clone(),
-                transform: Transform::from_xyz(
-                    platform.length as f32 * TILE_SIZE / 2.0 - HALF_TILE_SIZE,
-                    BALL_SPRITE_RADIUS + HALF_TILE_SIZE,
-                    3.0,
-                ),
-                ..Default::default()
-            },
-            RigidBody::Dynamic,
-            Collider::ball(BALL_SPRITE_RADIUS),
-            Velocity {
-                linvel: Vec2::new(0.0, 0.0),
-                angvel: 0.0,
-            },
-            ExternalImpulse {
-                impulse: Vec2::new(0.0, 0.0),
-                torque_impulse: 0.0,
-            },
-            Ccd::enabled(),
-            Restitution::new(2.0),
-        ))
-        .id();
-    commands.entity(platform_entity).add_child(ball_entity);
-}
 
 pub fn confine_ball_speed(mut query: Query<(&mut Velocity, &Ball)>) {
     for (mut binding, ball) in query.iter_mut() {
