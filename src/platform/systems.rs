@@ -1,4 +1,5 @@
 use super::components::Platform;
+use crate::ball::components::Ball;
 use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
@@ -7,6 +8,7 @@ const PLATFORM_DEFAULT_LENGTH: u32 = 8;
 const PLATFORM_FIRST_TILE: usize = 4;
 const PLATFORM_MIDDLE_TILE: usize = 5;
 const PLATFORM_LAST_TILE: usize = 6;
+const BALL_SPRITE_RADIUS: f32 = 16.0;
 
 pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures: Res<Textures>) {
     let window = windows.single();
@@ -78,6 +80,45 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
         ))
         .id();
     commands.entity(platform_entity).add_child(last_tile_entity);
+    spawn_ball_on_platform(commands, textures, platform_entity, PLATFORM_DEFAULT_LENGTH);
+}
+
+pub fn spawn_ball_on_platform(
+    mut commands: Commands,
+    textures: Res<Textures>,
+    platform_entity: Entity,
+    platform_length: u32,
+) {
+    let ball_entity = commands
+        .spawn((
+            Ball {
+                radius: BALL_SPRITE_RADIUS,
+                lay_on_platform: true,
+            },
+            SpriteBundle {
+                texture: textures.ball.clone(),
+                transform: Transform::from_xyz(
+                    platform_length as f32 * TILE_SIZE / 2.0 - HALF_TILE_SIZE,
+                    BALL_SPRITE_RADIUS + HALF_TILE_SIZE,
+                    3.0,
+                ),
+                ..Default::default()
+            },
+            RigidBody::Dynamic,
+            Collider::ball(BALL_SPRITE_RADIUS),
+            Velocity {
+                linvel: Vec2::new(0.0, 0.0),
+                angvel: 0.0,
+            },
+            ExternalImpulse {
+                impulse: Vec2::new(0.0, 0.0),
+                torque_impulse: 0.0,
+            },
+            Ccd::enabled(),
+            Restitution::new(2.0),
+        ))
+        .id();
+    commands.entity(platform_entity).add_child(ball_entity);
 }
 
 pub fn move_platform(

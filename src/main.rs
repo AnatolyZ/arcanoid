@@ -1,5 +1,6 @@
 mod ball;
 mod brick;
+mod main_menu;
 mod platform;
 mod play_area;
 mod states;
@@ -11,6 +12,7 @@ use bevy_rapier2d::prelude::*;
 
 use ball::BallPlugin;
 use brick::BricksPlugin;
+use main_menu::MainMenuPlugin;
 use platform::PlatformPlugin;
 use play_area::PlayAreaPlugin;
 use states::GameState;
@@ -36,6 +38,7 @@ fn main() {
             }),
             LdtkPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
+            MainMenuPlugin,
             PlatformPlugin,
             BallPlugin,
             BricksPlugin,

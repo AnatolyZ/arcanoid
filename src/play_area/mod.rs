@@ -15,10 +15,10 @@ impl Plugin for PlayAreaPlugin {
             TimerMode::Repeating,
         )))
         .insert_resource(LevelSelection::Index(0))
+        .add_systems(Startup, systems::spawn_camera)
         .add_systems(
-            Startup,
+            OnEnter(GameState::Setup),
             (
-                systems::spawn_camera,
                 systems::switch_off_gravity,
                 systems::spawn_borders,
                 systems::spawn_background,
