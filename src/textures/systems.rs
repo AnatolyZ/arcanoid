@@ -65,6 +65,8 @@ pub fn load_textures(
     );
     let stone = texture_atlases.add(texture_atlas);
 
+    let font: Handle<Font> = assets_server.load("Broshk.otf");
+
     commands.insert_resource(Textures {
         ball,
         background,
@@ -73,5 +75,6 @@ pub fn load_textures(
         rock,
         sand,
         stone,
+        font,
     });
 }

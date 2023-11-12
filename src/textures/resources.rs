@@ -9,4 +9,5 @@ pub struct Textures {
     pub marble: Handle<TextureAtlas>,
     pub rock: Handle<TextureAtlas>,
     pub stone: Handle<TextureAtlas>,
+    pub font: Handle<Font>,
 }
