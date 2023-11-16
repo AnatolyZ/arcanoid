@@ -1,4 +1,6 @@
+use super::components::ButtonType;
 use crate::main_menu::components::MainMenu;
+use crate::states::GameState;
 use crate::textures::resources::Textures;
 use bevy::prelude::*;
 
@@ -6,8 +8,8 @@ const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const PRESSED_BUTTON: Color = Color::rgb(0.1, 0.1, 0.1);
 const HOVERED_BUTTON: Color = Color::rgb(0.2, 0.2, 0.2);
 
-pub fn spawn_main_menu(mut commands: Commands, textures: Res<Textures>) {
-    let main_menu_entity = build_main_menu(commands, textures);
+pub fn spawn_main_menu(commands: Commands, textures: Res<Textures>) {
+    build_main_menu(commands, textures);
 }
 
 pub fn despawn_main_menu(mut commands: Commands, main_menu_query: Query<Entity, With<MainMenu>>) {
@@ -25,7 +27,7 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
             height: Val::Percent(100.0),
             display: Display::Flex,
             flex_direction: FlexDirection::Column,
-            justify_content: JustifyContent::Start,
+            justify_content: JustifyContent::SpaceBetween,
             align_items: AlignItems::Center,
             ..Default::default()
         },
@@ -160,13 +162,54 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
         },
     );
 
+    let footer_node = NodeBundle {
+        style: Style {
+            width: Val::Percent(100.0),
+            height: Val::Percent(20.0),
+            justify_content: JustifyContent::SpaceBetween,
+            align_items: AlignItems::Center,
+            margin: UiRect::all(Val::Px(10.0)),
+            flex_direction: FlexDirection::Row,
+            ..default()
+        },
+        ..default()
+    };
+
+    let bevy_logo_node = ImageBundle {
+        style: Style {
+            width: Val::Px(90.0),
+            height: Val::Px(66.0),
+            margin: UiRect::all(Val::Px(10.0)),
+            ..default()
+        },
+        image: UiImage {
+            texture: textures.bevy_logo.clone(),
+            ..default()
+        },
+        ..default()
+    };
+
+    let rapier_logo_node = ImageBundle {
+        style: Style {
+            width: Val::Px(263.0),
+            height: Val::Px(66.0),
+            margin: UiRect::all(Val::Px(10.0)),
+            ..default()
+        },
+        image: UiImage {
+            texture: textures.rapier_logo.clone(),
+            ..default()
+        },
+        ..default()
+    };
+
     let text_caption = commands.spawn(text_caption_node).id();
     let main_menu = commands.spawn((main_menu_node, MainMenu {})).id();
     let button_start = commands
         .spawn(button_start_box_node)
         .with_children(|parent| {
             parent
-                .spawn(button_start_node)
+                .spawn((button_start_node, ButtonType::Start))
                 .clear_children()
                 .with_children(|parent| {
                     parent.spawn(button_start_text_node);
@@ -184,9 +227,19 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
     let button_exit = commands
         .spawn(button_exit_box_node)
         .with_children(|parent| {
-            parent.spawn(button_exit_node).with_children(|parent| {
-                parent.spawn(button_exit_text_node);
-            });
+            parent
+                .spawn((button_exit_node, ButtonType::Exit))
+                .with_children(|parent| {
+                    parent.spawn(button_exit_text_node);
+                });
+        })
+        .id();
+
+    let footer = commands
+        .spawn(footer_node)
+        .with_children(|parent| {
+            parent.spawn(bevy_logo_node);
+            parent.spawn(rapier_logo_node);
         })
         .id();
 
@@ -195,12 +248,13 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
         button_start,
         button_options,
         button_exit,
+        footer,
     ]);
 
     main_menu
 }
 
-pub fn button_system(
+pub fn buttons_state_system(
     mut interaction_query: Query<
         (
             &Interaction,
@@ -230,6 +284,22 @@ pub fn button_system(
                 border_color.0 = Color::BLACK;
                 style.height = Val::Percent(90.0);
                 style.width = Val::Percent(40.0);
+            }
+        }
+    }
+}
+
+pub fn buttons_press_system(
+    mut next_state: ResMut<NextState<GameState>>,
+    mut interaction_query: Query<(&Interaction, &ButtonType), (Changed<Interaction>, With<Button>)>,
+) {
+    for (interaction, button_type) in &mut interaction_query {
+        if interaction == &Interaction::Pressed {
+            match button_type {
+                ButtonType::Start => next_state.set(GameState::Setup),
+                ButtonType::Exit => {
+                    std::process::exit(0);
+                }
             }
         }
     }

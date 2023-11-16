@@ -10,4 +10,6 @@ pub struct Textures {
     pub rock: Handle<TextureAtlas>,
     pub stone: Handle<TextureAtlas>,
     pub font: Handle<Font>,
+    pub bevy_logo: Handle<Image>,
+    pub rapier_logo: Handle<Image>,
 }

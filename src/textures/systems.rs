@@ -7,6 +7,8 @@ pub fn load_textures(
     assets_server: Res<AssetServer>,
 ) {
     let ball: Handle<Image> = assets_server.load("ball_red_small.png");
+    let bevy_logo: Handle<Image> = assets_server.load("bevy_logo.png");
+    let rapier_logo: Handle<Image> = assets_server.load("rapier_logo.png");
 
     let background: Handle<Image> = assets_server.load("background.png");
 
@@ -76,5 +78,7 @@ pub fn load_textures(
         sand,
         stone,
         font,
+        bevy_logo,
+        rapier_logo,
     });
 }
