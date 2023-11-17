@@ -44,7 +44,6 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
                     font_size: 160.0,
                     color: Color::WHITE,
                 },
-                ..Default::default()
             }],
             alignment: TextAlignment::Center,
             linebreak_behavior: bevy::text::BreakLineOn::NoWrap,
@@ -88,7 +87,6 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
             font_size: 80.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
-            ..default()
         },
     );
 
@@ -123,7 +121,6 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
             font_size: 80.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
-            ..default()
         },
     );
 
@@ -158,7 +155,6 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
             font_size: 80.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
-            ..default()
         },
     );
 
@@ -254,6 +250,7 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) -> Entit
     main_menu
 }
 
+#[allow(clippy::type_complexity)]
 pub fn buttons_state_system(
     mut interaction_query: Query<
         (
@@ -289,6 +286,7 @@ pub fn buttons_state_system(
     }
 }
 
+#[allow(clippy::type_complexity)]
 pub fn buttons_press_system(
     mut next_state: ResMut<NextState<GameState>>,
     mut interaction_query: Query<(&Interaction, &ButtonType), (Changed<Interaction>, With<Button>)>,
