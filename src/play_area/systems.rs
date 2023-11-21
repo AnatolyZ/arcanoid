@@ -1,5 +1,7 @@
 use super::components::Animation;
+use super::components::OutSensor;
 use super::resources::AnimationTimer;
+use crate::states::GameState;
 use crate::{
     textures::{self, BACKGROUND_HEIGHT, BACKGROUND_WIDTH, HALF_TILE_SIZE, TILE_SIZE},
     SCREEN_HEIGHT, SCREEN_WIDTH,
@@ -55,12 +57,15 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
     commands.spawn((
         Collider::cuboid(width / 2.0, HALF_TILE_SIZE),
-        Transform::from_xyz(0.0, bottom - TILE_SIZE, 2.0),
+        Transform::from_xyz(0.0, bottom - TILE_SIZE * 2.0, 2.0),
         GlobalTransform::default(),
+        ActiveEvents::COLLISION_EVENTS,
         Friction {
             coefficient: 0.0,
             combine_rule: CoefficientCombineRule::Min,
         },
+        Sensor,
+        OutSensor {},
     ));
 }
 
@@ -177,4 +182,20 @@ pub fn load_ldtk_level(mut commands: Commands, asset_server: Res<AssetServer>) {
         transform: Transform::from_xyz(-SCREEN_WIDTH / 2.0, -SCREEN_HEIGHT / 2.0, 0.0),
         ..Default::default()
     });
+}
+
+pub fn collision_handler(
+    mut next_state: ResMut<NextState<GameState>>,
+    mut collisions: EventReader<CollisionEvent>,
+    mut out_sensor_query: Query<Entity, With<OutSensor>>,
+) {
+    for ev in collisions.iter() {
+        if let CollisionEvent::Started(entity1, entity2, _) = ev {
+            if out_sensor_query.get_mut(*entity1).is_ok()
+                || out_sensor_query.get_mut(*entity2).is_ok()
+            {
+                next_state.set(GameState::Over);
+            }
+        }
+    }
 }

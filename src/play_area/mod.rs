@@ -27,7 +27,10 @@ impl Plugin for PlayAreaPlugin {
         )
         .add_systems(
             Update,
-            systems::tick_animation.run_if(in_state(GameState::Game)),
+            (
+                systems::tick_animation.run_if(in_state(GameState::Game)),
+                systems::collision_handler.run_if(in_state(GameState::Game)),
+            ),
         );
     }
 }
