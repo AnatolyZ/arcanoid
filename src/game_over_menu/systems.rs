@@ -67,7 +67,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
         },
         ..default()
     };
-    // Start button
+    // Restart button
     let button_restart_box_node = NodeBundle {
         style: Style {
             width: Val::Percent(80.0),
@@ -96,7 +96,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
     let button_restart_text_node = TextBundle::from_section(
         "Restart",
         TextStyle {
-            font_size: 60.0,
+            font_size: 56.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
         },
@@ -130,7 +130,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
     let button_menu_text_node = TextBundle::from_section(
         "Main Menu",
         TextStyle {
-            font_size: 60.0,
+            font_size: 56.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
         },
@@ -164,7 +164,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
     let button_exit_text_node = TextBundle::from_section(
         "Exit",
         TextStyle {
-            font_size: 60.0,
+            font_size: 56.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
         },
@@ -219,34 +219,23 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
 #[allow(clippy::type_complexity)]
 pub fn buttons_state_system(
     mut interaction_query: Query<
-        (
-            &Interaction,
-            &mut BackgroundColor,
-            &mut BorderColor,
-            &mut Style,
-        ),
+        (&Interaction, &mut BackgroundColor, &mut BorderColor),
         (Changed<Interaction>, With<Button>),
     >,
 ) {
-    for (interaction, mut color, mut border_color, mut style) in &mut interaction_query {
+    for (interaction, mut color, mut border_color) in &mut interaction_query {
         match *interaction {
             Interaction::Pressed => {
                 *color = PRESSED_BUTTON.into();
                 border_color.0 = Color::RED;
-                style.height = Val::Percent(89.0);
-                style.width = Val::Percent(39.0);
             }
             Interaction::Hovered => {
                 *color = HOVERED_BUTTON.into();
                 border_color.0 = Color::WHITE;
-                style.height = Val::Percent(91.0);
-                style.width = Val::Percent(41.0);
             }
             Interaction::None => {
                 *color = NORMAL_BUTTON.into();
                 border_color.0 = Color::BLACK;
-                style.height = Val::Percent(90.0);
-                style.width = Val::Percent(40.0);
             }
         }
     }

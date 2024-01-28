@@ -10,7 +10,8 @@ pub enum GameState {
     Setup,
     Game,
     Paused,
-    Over,
+    OverOver,
+    LevelComplete,
 }
 
 pub struct StatesPlugin;
@@ -18,18 +19,21 @@ pub struct StatesPlugin;
 impl Plugin for StatesPlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(resources::SetupTimer(Timer::from_seconds(
-            1.0,
+            0.1,
             TimerMode::Once,
         )))
-        .add_systems(Update, systems::pause_game_control)
+        .add_systems(
+            Update,
+            systems::pause_game_control.run_if(|current_state: Res<State<GameState>>| {
+                *current_state == GameState::Game || *current_state == GameState::Paused
+            }),
+        )
         .add_systems(OnEnter(GameState::Setup), systems::reset_setup_timer)
         .add_systems(
             Update,
             systems::tick_setup_timer.run_if(in_state(GameState::Setup)),
         )
-        .add_systems(OnEnter(GameState::Paused), systems::on_enter_pause)
-        .add_systems(OnExit(GameState::Paused), systems::on_exit_pause)
-        .add_systems(OnEnter(GameState::Over), systems::on_enter_over)
-        .add_systems(OnExit(GameState::Over), systems::on_exit_over);
+        .add_systems(OnEnter(GameState::Game), systems::on_enter_game)
+        .add_systems(OnExit(GameState::Game), systems::on_exit_game);
     }
 }

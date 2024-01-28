@@ -4,6 +4,7 @@ use bevy_ecs_ldtk::prelude::*;
 mod components;
 mod systems;
 
+pub use components::Brick;
 pub struct BricksPlugin;
 
 impl Plugin for BricksPlugin {
