@@ -428,7 +428,7 @@ pub fn collision_handler(
             if out_sensor_query.get_mut(*entity1).is_ok()
                 || out_sensor_query.get_mut(*entity2).is_ok()
             {
-                next_state.set(GameState::Over);
+                next_state.set(GameState::OverOver);
             }
         }
     }

@@ -10,11 +10,11 @@ pub struct GameOverMenuPlugin;
 
 impl Plugin for GameOverMenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Over), systems::spawn_game_over_menu)
-            .add_systems(OnExit(GameState::Over), systems::despawn_game_over_menu)
+        app.add_systems(OnEnter(GameState::OverOver), systems::spawn_game_over_menu)
+            .add_systems(OnExit(GameState::OverOver), systems::despawn_game_over_menu)
             .add_systems(
                 Update,
-                (buttons_state_system, buttons_press_system).run_if(in_state(GameState::Over)),
+                (buttons_state_system, buttons_press_system).run_if(in_state(GameState::OverOver)),
             );
     }
 }

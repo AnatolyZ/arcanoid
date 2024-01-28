@@ -1,6 +1,7 @@
 mod ball;
 mod brick;
 mod game_over_menu;
+mod level_complete_menu;
 mod main_menu;
 mod platform;
 mod play_area;
@@ -15,6 +16,7 @@ use bevy_rapier2d::prelude::*;
 use ball::BallPlugin;
 use brick::BricksPlugin;
 use game_over_menu::GameOverMenuPlugin;
+use level_complete_menu::LevelCompleteMenuPlugin;
 use main_menu::MainMenuPlugin;
 use platform::PlatformPlugin;
 use play_area::PlayAreaPlugin;
@@ -50,6 +52,7 @@ fn main() {
             PlayAreaPlugin,
             StatesPlugin,
             TexturesPlugin,
+            LevelCompleteMenuPlugin,
             //RapierDebugRenderPlugin::default(),
         ))
         .run()
