@@ -12,6 +12,7 @@ impl Plugin for BallPlugin {
         app.add_systems(
             Update,
             (systems::confine_ball_speed, systems::launch_ball).run_if(in_state(GameState::Game)),
-        );
+        )
+        .add_systems(OnExit(GameState::Over), (systems::despawn_balls,));
     }
 }

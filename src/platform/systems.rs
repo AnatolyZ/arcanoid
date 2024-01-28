@@ -135,3 +135,9 @@ pub fn move_platform(
         }
     }
 }
+
+pub fn despawn_platform(mut commands: Commands, platform_query: Query<Entity, With<Platform>>) {
+    for entity in platform_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+}

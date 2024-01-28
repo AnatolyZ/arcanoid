@@ -54,3 +54,9 @@ pub fn launch_ball(
         }
     }
 }
+
+pub fn despawn_balls(mut commands: Commands, ball_query: Query<Entity, With<Ball>>) {
+    for entity in ball_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+}

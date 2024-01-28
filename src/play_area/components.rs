@@ -8,3 +8,12 @@ pub struct Animation {
 
 #[derive(Component)]
 pub struct OutSensor;
+
+#[derive(Component)]
+pub struct Background;
+
+#[derive(Component)]
+pub struct Border;
+
+#[derive(Component)]
+pub struct LdtkWorld;

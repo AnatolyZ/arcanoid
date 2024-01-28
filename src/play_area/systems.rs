@@ -1,4 +1,7 @@
 use super::components::Animation;
+use super::components::Background;
+use super::components::Border;
+use super::components::LdtkWorld;
 use super::components::OutSensor;
 use super::resources::AnimationTimer;
 use crate::states::GameState;
@@ -6,7 +9,9 @@ use crate::{
     textures::{self, BACKGROUND_HEIGHT, BACKGROUND_WIDTH, HALF_TILE_SIZE, TILE_SIZE},
     SCREEN_HEIGHT, SCREEN_WIDTH,
 };
+use bevy::math::bool;
 use bevy::prelude::*;
+use bevy::sprite;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 use textures::resources::Textures;
@@ -29,6 +34,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     let bottom = -height / 2.0 + TILE_SIZE / 2.0;
 
     commands.spawn((
+        Border {},
         Collider::cuboid(width / 2.0, HALF_TILE_SIZE),
         Transform::from_xyz(0.0, top, 2.0),
         GlobalTransform::default(),
@@ -38,6 +44,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
         },
     ));
     commands.spawn((
+        Border {},
         Collider::cuboid(HALF_TILE_SIZE, height / 2.0),
         Transform::from_xyz(right, 0.0, 2.0),
         GlobalTransform::default(),
@@ -47,6 +54,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
         },
     ));
     commands.spawn((
+        Border {},
         Collider::cuboid(HALF_TILE_SIZE, height / 2.0),
         Transform::from_xyz(left, 0.0, 2.0),
         GlobalTransform::default(),
@@ -56,6 +64,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
         },
     ));
     commands.spawn((
+        Border {},
         Collider::cuboid(width / 2.0, HALF_TILE_SIZE),
         Transform::from_xyz(0.0, bottom - TILE_SIZE * 2.0, 2.0),
         GlobalTransform::default(),
@@ -72,32 +81,251 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
 pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
     let left = -SCREEN_WIDTH / 2.0 + TILE_SIZE / 2.0;
     let right = SCREEN_WIDTH / 2.0 - TILE_SIZE / 2.0;
-    let top = SCREEN_HEIGHT / 2.0 - TILE_SIZE / 2.0;
     let bottom = -SCREEN_HEIGHT / 2.0 + TILE_SIZE / 2.0;
+    let top = SCREEN_HEIGHT / 2.0 - TILE_SIZE / 2.0;
 
+    fn draw_single_sprite(
+        commands: &mut Commands,
+        textures: &Res<Textures>,
+        sprite_index: usize,
+        x: f32,
+        y: f32,
+        flip_x: bool,
+        flip_y: bool,
+    ) {
+        commands.spawn((
+            Background {},
+            SpriteSheetBundle {
+                texture_atlas: textures.industrial.clone(),
+                sprite: {
+                    let mut sprite = TextureAtlasSprite::new(sprite_index);
+                    sprite.flip_x = flip_x;
+                    sprite.flip_y = flip_y;
+                    sprite
+                },
+                transform: Transform::from_xyz(x, y, 2.0),
+                ..Default::default()
+            },
+        ));
+    }
+
+    fn draw_vertical_line(
+        commands: &mut Commands,
+        textures: &Res<Textures>,
+        sprite_index: usize,
+        x: f32,
+        bottom: f32,
+        top: f32,
+    ) {
+        for y in (bottom as i32..top as i32 + TILE_SIZE as i32).step_by(TILE_SIZE as usize) {
+            commands.spawn((
+                Background {},
+                SpriteSheetBundle {
+                    texture_atlas: textures.industrial.clone(),
+                    sprite: TextureAtlasSprite::new(sprite_index),
+                    transform: Transform::from_xyz(x, y as f32, 2.0),
+                    ..Default::default()
+                },
+            ));
+        }
+    }
+
+    fn draw_horizontal_line(
+        commands: &mut Commands,
+        textures: &Res<Textures>,
+        sprite_index: usize,
+        y: f32,
+        left: f32,
+        right: f32,
+    ) {
+        for x in (left as i32..right as i32 + TILE_SIZE as i32).step_by(TILE_SIZE as usize) {
+            commands.spawn((
+                Background {},
+                SpriteSheetBundle {
+                    texture_atlas: textures.industrial.clone(),
+                    sprite: TextureAtlasSprite::new(sprite_index),
+                    transform: Transform::from_xyz(x as f32, y, 2.0),
+                    ..Default::default()
+                },
+            ));
+        }
+    }
     // draw background
     let x_scale = SCREEN_WIDTH / BACKGROUND_WIDTH;
     let y_scale = SCREEN_HEIGHT / BACKGROUND_HEIGHT;
-
-    commands.spawn(SpriteBundle {
-        texture: textures.background.clone(),
-        transform: Transform::from_xyz(0.0, 0.0, 0.0).with_scale(Vec3::new(x_scale, y_scale, 1.0)),
-        ..Default::default()
-    });
-
-    commands.spawn(SpriteSheetBundle {
-        texture_atlas: textures.industrial.clone(),
-        sprite: TextureAtlasSprite::new(76),
-        transform: Transform::from_xyz(left, top, 2.0),
-        ..Default::default()
-    });
-    commands.spawn(SpriteSheetBundle {
-        texture_atlas: textures.industrial.clone(),
-        sprite: TextureAtlasSprite::new(77),
-        transform: Transform::from_xyz(right, top, 2.0),
-        ..Default::default()
-    });
     commands.spawn((
+        Background {},
+        SpriteBundle {
+            texture: textures.background.clone(),
+            transform: Transform::from_xyz(0.0, 0.0, 0.0)
+                .with_scale(Vec3::new(x_scale, y_scale, 1.0)),
+            ..Default::default()
+        },
+    ));
+
+    // sedes of the screen panels
+    draw_vertical_line(
+        &mut commands,
+        &textures,
+        52,
+        right,
+        bottom + TILE_SIZE * 8.0,
+        top - TILE_SIZE,
+    );
+    draw_vertical_line(
+        &mut commands,
+        &textures,
+        52,
+        left,
+        bottom + TILE_SIZE * 8.0,
+        top - TILE_SIZE,
+    );
+
+    // verticel pipes
+    draw_vertical_line(
+        &mut commands,
+        &textures,
+        75,
+        left,
+        bottom + TILE_SIZE * 2.0,
+        bottom + TILE_SIZE * 6.0,
+    );
+    draw_vertical_line(
+        &mut commands,
+        &textures,
+        75,
+        right,
+        bottom + TILE_SIZE * 2.0,
+        bottom + TILE_SIZE * 6.0,
+    );
+
+    // vertical panels for ball area
+    draw_vertical_line(
+        &mut commands,
+        &textures,
+        52,
+        right - TILE_SIZE * 6.0,
+        bottom + TILE_SIZE,
+        top - TILE_SIZE,
+    );
+    draw_vertical_line(
+        &mut commands,
+        &textures,
+        52,
+        left + TILE_SIZE * 6.0,
+        bottom + TILE_SIZE,
+        top - TILE_SIZE,
+    );
+
+    // top joints
+    draw_single_sprite(
+        &mut commands,
+        &textures,
+        38,
+        right - TILE_SIZE * 6.0,
+        top,
+        false,
+        false,
+    );
+    draw_single_sprite(
+        &mut commands,
+        &textures,
+        38,
+        left + TILE_SIZE * 6.0,
+        top,
+        false,
+        false,
+    );
+    draw_single_sprite(&mut commands, &textures, 38, right, top, false, false);
+    draw_single_sprite(&mut commands, &textures, 38, left, top, false, false);
+
+    // top panels
+    draw_horizontal_line(
+        &mut commands,
+        &textures,
+        5,
+        top,
+        left + TILE_SIZE,
+        left + TILE_SIZE * 5.0,
+    );
+    draw_horizontal_line(
+        &mut commands,
+        &textures,
+        5,
+        top,
+        left + TILE_SIZE * 7.0,
+        right - TILE_SIZE * 7.0,
+    );
+    draw_horizontal_line(
+        &mut commands,
+        &textures,
+        5,
+        top,
+        right - TILE_SIZE * 5.0,
+        right - TILE_SIZE,
+    );
+
+    // bottom panels
+    draw_horizontal_line(
+        &mut commands,
+        &textures,
+        5,
+        bottom + TILE_SIZE * 7.0,
+        left + TILE_SIZE,
+        left + TILE_SIZE * 5.0,
+    );
+    draw_horizontal_line(
+        &mut commands,
+        &textures,
+        5,
+        bottom + TILE_SIZE * 7.0,
+        right - TILE_SIZE * 5.0,
+        right - TILE_SIZE,
+    );
+
+    // bottom joints
+    draw_single_sprite(
+        &mut commands,
+        &textures,
+        38,
+        left,
+        bottom + TILE_SIZE * 7.0,
+        false,
+        true,
+    );
+    draw_single_sprite(
+        &mut commands,
+        &textures,
+        38,
+        right,
+        bottom + TILE_SIZE * 7.0,
+        false,
+        true,
+    );
+
+    // bottom details
+    draw_single_sprite(
+        &mut commands,
+        &textures,
+        80,
+        right - TILE_SIZE * 5.0,
+        bottom + TILE_SIZE * 6.0,
+        false,
+        false,
+    );
+    draw_single_sprite(
+        &mut commands,
+        &textures,
+        96,
+        left + TILE_SIZE * 5.0,
+        bottom + TILE_SIZE * 6.0,
+        false,
+        false,
+    );
+
+    // draw animated drainings
+    commands.spawn((
+        Background {},
         SpriteSheetBundle {
             texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(78),
@@ -110,6 +338,7 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         },
     ));
     commands.spawn((
+        Background {},
         SpriteSheetBundle {
             texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(78),
@@ -122,6 +351,7 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         },
     ));
     commands.spawn((
+        Background {},
         SpriteSheetBundle {
             texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(94),
@@ -134,6 +364,7 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         },
     ));
     commands.spawn((
+        Background {},
         SpriteSheetBundle {
             texture_atlas: textures.industrial.clone(),
             sprite: TextureAtlasSprite::new(94),
@@ -148,6 +379,7 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
 
     for x in (left as i32 + TILE_SIZE as i32..right as i32).step_by(TILE_SIZE as usize) {
         commands.spawn((
+            Background {},
             SpriteSheetBundle {
                 texture_atlas: textures.industrial.clone(),
                 sprite: TextureAtlasSprite::new(13),
@@ -176,12 +408,15 @@ pub fn tick_animation(
     }
 }
 
-pub fn load_ldtk_level(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("levels.ldtk"),
-        transform: Transform::from_xyz(-SCREEN_WIDTH / 2.0, -SCREEN_HEIGHT / 2.0, 0.0),
-        ..Default::default()
-    });
+pub fn load_ldtk_world(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn((
+        LdtkWorld {},
+        LdtkWorldBundle {
+            ldtk_handle: asset_server.load("levels.ldtk"),
+            transform: Transform::from_xyz(-SCREEN_WIDTH / 2.0, -SCREEN_HEIGHT / 2.0, 0.0),
+            ..Default::default()
+        },
+    ));
 }
 
 pub fn collision_handler(
@@ -197,5 +432,29 @@ pub fn collision_handler(
                 next_state.set(GameState::Over);
             }
         }
+    }
+}
+
+pub fn despawn_borders(mut commands: Commands, border_query: Query<Entity, With<Border>>) {
+    for entity in border_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+}
+
+pub fn despawn_background(
+    mut commands: Commands,
+    background_query: Query<Entity, With<Background>>,
+) {
+    for entity in background_query.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+}
+
+pub fn despawn_ldtk_world(
+    mut commands: Commands,
+    ldtk_world_query: Query<Entity, With<LdtkWorld>>,
+) {
+    for entity in ldtk_world_query.iter() {
+        commands.entity(entity).despawn_recursive();
     }
 }
