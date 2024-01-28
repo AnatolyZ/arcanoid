@@ -1,7 +1,5 @@
 use super::{resources::SetupTimer, GameState};
-use crate::play_area::LdtkWorld;
-use bevy::{prelude::*, transform::commands};
-use bevy_ecs_ldtk::{ldtk, Respawn};
+use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 pub fn pause_game_control(
