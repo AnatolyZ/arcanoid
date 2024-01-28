@@ -11,7 +11,6 @@ use crate::{
 };
 use bevy::math::bool;
 use bevy::prelude::*;
-use bevy::sprite;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 use textures::resources::Textures;
