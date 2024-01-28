@@ -2,8 +2,6 @@ mod components;
 mod resources;
 mod systems;
 
-pub use components::LdtkWorld;
-
 use crate::states::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
