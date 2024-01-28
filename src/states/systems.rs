@@ -1,5 +1,7 @@
 use super::{resources::SetupTimer, GameState};
-use bevy::prelude::*;
+use crate::play_area::LdtkWorld;
+use bevy::{prelude::*, transform::commands};
+use bevy_ecs_ldtk::{ldtk, Respawn};
 use bevy_rapier2d::prelude::*;
 
 pub fn pause_game_control(
@@ -12,7 +14,7 @@ pub fn pause_game_control(
             GameState::Game => next_state.set(GameState::Paused),
             GameState::Paused => next_state.set(GameState::Game),
             GameState::Menu => next_state.set(GameState::Setup),
-            GameState::Over => todo!(),
+            GameState::Over => next_state.set(GameState::Menu),
             GameState::Setup => todo!(),
         }
     }
@@ -20,6 +22,14 @@ pub fn pause_game_control(
 
 pub fn on_enter_pause(mut rapier_config: ResMut<RapierConfiguration>) {
     rapier_config.physics_pipeline_active = false;
+}
+
+pub fn on_enter_over(mut rapier_config: ResMut<RapierConfiguration>) {
+    rapier_config.physics_pipeline_active = false;
+}
+
+pub fn on_exit_over(mut rapier_config: ResMut<RapierConfiguration>) {
+    rapier_config.physics_pipeline_active = true;
 }
 
 pub fn on_exit_pause(mut rapier_config: ResMut<RapierConfiguration>) {

@@ -28,7 +28,8 @@ impl Plugin for StatesPlugin {
             systems::tick_setup_timer.run_if(in_state(GameState::Setup)),
         )
         .add_systems(OnEnter(GameState::Paused), systems::on_enter_pause)
-        .add_systems(OnEnter(GameState::Over), systems::on_enter_pause)
-        .add_systems(OnExit(GameState::Paused), systems::on_exit_pause);
+        .add_systems(OnExit(GameState::Paused), systems::on_exit_pause)
+        .add_systems(OnEnter(GameState::Over), systems::on_enter_over)
+        .add_systems(OnExit(GameState::Over), systems::on_exit_over);
     }
 }

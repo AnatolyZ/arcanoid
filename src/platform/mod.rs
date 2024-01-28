@@ -14,6 +14,7 @@ impl Plugin for PlatformPlugin {
             .add_systems(
                 Update,
                 systems::move_platform.run_if(in_state(GameState::Game)),
-            );
+            )
+            .add_systems(OnExit(GameState::Over), (systems::despawn_platform,));
     }
 }
