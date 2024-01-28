@@ -1,5 +1,5 @@
 use super::components::ButtonType;
-use crate::main_menu::components::MainMenu;
+use crate::game_over_menu::components::GameOverMenu;
 use crate::states::GameState;
 use crate::textures::resources::Textures;
 use bevy::prelude::*;
@@ -8,20 +8,22 @@ const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const PRESSED_BUTTON: Color = Color::rgb(0.1, 0.1, 0.1);
 const HOVERED_BUTTON: Color = Color::rgb(0.2, 0.2, 0.2);
 
-pub fn spawn_main_menu(commands: Commands, textures: Res<Textures>) {
-    build_main_menu(commands, textures);
+pub fn spawn_game_over_menu(commands: Commands, textures: Res<Textures>) {
+    build_game_over_menu(commands, textures);
 }
 
-pub fn despawn_main_menu(mut commands: Commands, main_menu_query: Query<Entity, With<MainMenu>>) {
-    for entity in main_menu_query.iter() {
+pub fn despawn_game_over_menu(
+    mut commands: Commands,
+    game_over_menu_query: Query<Entity, With<GameOverMenu>>,
+) {
+    for entity in game_over_menu_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
 }
 
-pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
+pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
     // Main menu container
     let main_menu_node = NodeBundle {
-        background_color: Color::hex("#7f8a88").unwrap().into(),
         style: Style {
             width: Val::Percent(100.0),
             height: Val::Percent(100.0),
@@ -38,11 +40,11 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
     let text_caption_node = TextBundle {
         text: Text {
             sections: vec![TextSection {
-                value: "ARCANOID".to_string(),
+                value: "Game Over".to_string(),
                 style: TextStyle {
                     font: textures.font.clone(),
-                    font_size: 160.0,
-                    color: Color::WHITE,
+                    font_size: 140.0,
+                    color: Color::BLACK,
                 },
             }],
             alignment: TextAlignment::Center,
@@ -55,11 +57,21 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
         ..Default::default()
     };
 
-    // Start button
-    let button_start_box_node = NodeBundle {
+    // Padding 10%
+    let padding_node = NodeBundle {
         style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(20.0),
+            height: Val::Percent(10.0),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
+            ..default()
+        },
+        ..default()
+    };
+    // Start button
+    let button_restart_box_node = NodeBundle {
+        style: Style {
+            width: Val::Percent(80.0),
+            height: Val::Percent(15.0),
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             margin: UiRect::all(Val::Px(10.0)),
@@ -67,7 +79,7 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
         },
         ..default()
     };
-    let button_start_node = ButtonBundle {
+    let button_restart_node = ButtonBundle {
         style: Style {
             width: Val::Percent(40.0),
             height: Val::Percent(90.0),
@@ -81,20 +93,20 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
         background_color: NORMAL_BUTTON.into(),
         ..default()
     };
-    let button_start_text_node = TextBundle::from_section(
-        "Start",
+    let button_restart_text_node = TextBundle::from_section(
+        "Restart",
         TextStyle {
-            font_size: 80.0,
+            font_size: 60.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
         },
     );
 
-    // Options button
-    let button_options_box_node = NodeBundle {
+    // Main Menu button
+    let button_menu_box_node = NodeBundle {
         style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(20.0),
+            width: Val::Percent(80.0),
+            height: Val::Percent(15.0),
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             margin: UiRect::all(Val::Px(10.0)),
@@ -102,7 +114,7 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
         },
         ..default()
     };
-    let button_options_node = ButtonBundle {
+    let button_menu_node = ButtonBundle {
         style: Style {
             width: Val::Percent(40.0),
             height: Val::Percent(90.0),
@@ -115,10 +127,10 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
         background_color: NORMAL_BUTTON.into(),
         ..default()
     };
-    let button_options_text_node = TextBundle::from_section(
-        "Options",
+    let button_menu_text_node = TextBundle::from_section(
+        "Main Menu",
         TextStyle {
-            font_size: 80.0,
+            font_size: 60.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
         },
@@ -127,8 +139,8 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
     // Exit button
     let button_exit_box_node = NodeBundle {
         style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(20.0),
+            width: Val::Percent(80.0),
+            height: Val::Percent(15.0),
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
             margin: UiRect::all(Val::Px(10.0)),
@@ -152,71 +164,32 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
     let button_exit_text_node = TextBundle::from_section(
         "Exit",
         TextStyle {
-            font_size: 80.0,
+            font_size: 60.0,
             font: textures.font.clone(),
             color: Color::rgb(0.9, 0.9, 0.9),
         },
     );
 
-    let footer_node = NodeBundle {
-        style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(20.0),
-            justify_content: JustifyContent::SpaceBetween,
-            align_items: AlignItems::Center,
-            margin: UiRect::all(Val::Px(10.0)),
-            flex_direction: FlexDirection::Row,
-            ..default()
-        },
-        ..default()
-    };
-
-    let bevy_logo_node = ImageBundle {
-        style: Style {
-            width: Val::Px(90.0),
-            height: Val::Px(66.0),
-            margin: UiRect::all(Val::Px(10.0)),
-            ..default()
-        },
-        image: UiImage {
-            texture: textures.bevy_logo.clone(),
-            ..default()
-        },
-        ..default()
-    };
-
-    let rapier_logo_node = ImageBundle {
-        style: Style {
-            width: Val::Px(263.0),
-            height: Val::Px(66.0),
-            margin: UiRect::all(Val::Px(10.0)),
-            ..default()
-        },
-        image: UiImage {
-            texture: textures.rapier_logo.clone(),
-            ..default()
-        },
-        ..default()
-    };
-
     let text_caption = commands.spawn(text_caption_node).id();
-    let button_start = commands
-        .spawn(button_start_box_node)
+    let button_restart = commands
+        .spawn(button_restart_box_node)
         .with_children(|parent| {
             parent
-                .spawn((button_start_node, ButtonType::Start))
+                .spawn((button_restart_node, ButtonType::Restart))
                 .clear_children()
                 .with_children(|parent| {
-                    parent.spawn(button_start_text_node);
+                    parent.spawn(button_restart_text_node);
                 });
         })
         .id();
-    let button_options = commands
-        .spawn(button_options_box_node)
+    let button_menu = commands
+        .spawn(button_menu_box_node)
         .with_children(|parent| {
-            parent.spawn(button_options_node).with_children(|parent| {
-                parent.spawn(button_options_text_node);
-            });
+            parent
+                .spawn((button_menu_node, ButtonType::MainMenu))
+                .with_children(|parent| {
+                    parent.spawn(button_menu_text_node);
+                });
         })
         .id();
     let button_exit = commands
@@ -229,22 +202,17 @@ pub fn build_main_menu(mut commands: Commands, textures: Res<Textures>) {
                 });
         })
         .id();
+    let padding_top = commands.spawn(padding_node.clone()).id();
+    let padding_bottom = commands.spawn(padding_node).id();
 
-    let footer = commands
-        .spawn(footer_node)
-        .with_children(|parent| {
-            parent.spawn(bevy_logo_node);
-            parent.spawn(rapier_logo_node);
-        })
-        .id();
-
-    let main_menu = commands.spawn((main_menu_node, MainMenu {})).id();
+    let main_menu = commands.spawn((main_menu_node, GameOverMenu {})).id();
     commands.entity(main_menu).push_children(&[
+        padding_top,
         text_caption,
-        button_start,
-        button_options,
+        button_restart,
+        button_menu,
         button_exit,
-        footer,
+        padding_bottom,
     ]);
 }
 
@@ -292,7 +260,8 @@ pub fn buttons_press_system(
     for (interaction, button_type) in &mut interaction_query {
         if interaction == &Interaction::Pressed {
             match button_type {
-                ButtonType::Start => next_state.set(GameState::Setup),
+                ButtonType::Restart => next_state.set(GameState::Setup),
+                ButtonType::MainMenu => next_state.set(GameState::Menu),
                 ButtonType::Exit => {
                     std::process::exit(0);
                 }
