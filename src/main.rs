@@ -8,6 +8,7 @@ mod textures;
 
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_inspector_egui::quick::WorldInspectorPlugin;
 use bevy_rapier2d::prelude::*;
 
 use ball::BallPlugin;
@@ -36,6 +37,7 @@ fn main() {
                 }),
                 ..default()
             }),
+            //WorldInspectorPlugin::new(),
             LdtkPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
             MainMenuPlugin,
