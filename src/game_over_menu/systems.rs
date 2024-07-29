@@ -4,9 +4,9 @@ use crate::states::GameState;
 use crate::textures::resources::Textures;
 use bevy::prelude::*;
 
-const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
-const PRESSED_BUTTON: Color = Color::rgb(0.1, 0.1, 0.1);
-const HOVERED_BUTTON: Color = Color::rgb(0.2, 0.2, 0.2);
+const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
+const PRESSED_BUTTON: Color = Color::srgb(0.1, 0.1, 0.1);
+const HOVERED_BUTTON: Color = Color::srgb(0.2, 0.2, 0.2);
 
 pub fn spawn_game_over_menu(commands: Commands, textures: Res<Textures>) {
     build_game_over_menu(commands, textures);
@@ -47,7 +47,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
                     color: Color::BLACK,
                 },
             }],
-            alignment: TextAlignment::Center,
+            justify: JustifyText::Center,
             linebreak_behavior: bevy::text::BreakLineOn::NoWrap,
         },
         style: Style {
@@ -98,7 +98,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
         TextStyle {
             font_size: 56.0,
             font: textures.font.clone(),
-            color: Color::rgb(0.9, 0.9, 0.9),
+            color: Color::srgb(0.9, 0.9, 0.9),
         },
     );
 
@@ -132,7 +132,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
         TextStyle {
             font_size: 56.0,
             font: textures.font.clone(),
-            color: Color::rgb(0.9, 0.9, 0.9),
+            color: Color::srgb(0.9, 0.9, 0.9),
         },
     );
 
@@ -166,7 +166,7 @@ pub fn build_game_over_menu(mut commands: Commands, textures: Res<Textures>) {
         TextStyle {
             font_size: 56.0,
             font: textures.font.clone(),
-            color: Color::rgb(0.9, 0.9, 0.9),
+            color: Color::srgb(0.9, 0.9, 0.9),
         },
     );
 
@@ -227,7 +227,7 @@ pub fn buttons_state_system(
         match *interaction {
             Interaction::Pressed => {
                 *color = PRESSED_BUTTON.into();
-                border_color.0 = Color::RED;
+                border_color.0 = Color::BLACK;
             }
             Interaction::Hovered => {
                 *color = HOVERED_BUTTON.into();

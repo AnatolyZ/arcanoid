@@ -5,12 +5,12 @@
 		"doc": "https://ldtk.io/json",
 		"schema": "https://ldtk.io/files/JSON_SCHEMA.json",
 		"appAuthor": "Sebastien 'deepnight' Benard",
-		"appVersion": "1.3.3",
+		"appVersion": "1.5.3",
 		"url": "https://ldtk.io"
 	},
 	"iid": "e919abb0-1460-11ee-9be5-1139e8b9227d",
-	"jsonVersion": "1.3.3",
-	"appBuildId": 467698,
+	"jsonVersion": "1.5.3",
+	"appBuildId": 473703,
 	"nextUid": 297,
 	"identifierStyle": "Capitalize",
 	"toc": [],
@@ -22,6 +22,8 @@
 	"defaultPivotX": 0,
 	"defaultPivotY": 0,
 	"defaultGridSize": 18,
+	"defaultEntityWidth": 16,
+	"defaultEntityHeight": 16,
 	"bgColor": "#40465B",
 	"defaultLevelBgColor": "#696A79",
 	"minifyJson": false,
@@ -37,7 +39,7 @@
 	"levelNamePattern": "Level_%idx",
 	"tutorialDesc": null,
 	"customCommands": [],
-	"flags": [],
+	"flags": ["ExportOldTableOfContentData"],
 	"defs": { "layers": [
 		{
 			"__type": "IntGrid",
@@ -62,17 +64,22 @@
 			"parallaxScaling": false,
 			"requiredTags": [],
 			"excludedTags": [],
+			"autoTilesKilledByOtherLayerUid": null,
+			"uiFilterTags": [],
+			"useAsyncRender": false,
 			"intGridValues": [
-				{ "value": 1, "identifier": "SAND", "color": "#EAD4AA", "tile": null },
-				{ "value": 2, "identifier": "STONE", "color": "#E38771", "tile": null },
-				{ "value": 3, "identifier": "ROCK", "color": "#C0CBDC", "tile": null },
-				{ "value": 4, "identifier": "MARBLE", "color": "#EBDED5", "tile": null }
+				{ "value": 1, "identifier": "SAND", "color": "#EAD4AA", "tile": null, "groupUid": 0 },
+				{ "value": 2, "identifier": "STONE", "color": "#E38771", "tile": null, "groupUid": 0 },
+				{ "value": 3, "identifier": "ROCK", "color": "#C0CBDC", "tile": null, "groupUid": 0 },
+				{ "value": 4, "identifier": "MARBLE", "color": "#EBDED5", "tile": null, "groupUid": 0 }
 			],
+			"intGridValuesGroups": [],
 			"autoRuleGroups": [],
 			"autoSourceLayerDefUid": null,
 			"tilesetDefUid": null,
 			"tilePivotX": 0,
-			"tilePivotY": 0
+			"tilePivotY": 0,
+			"biomeFieldUid": null
 		}
 	], "entities": [], "tilesets": [
 		{
@@ -140,8 +147,8 @@
 					"optionalRules": [],
 					"intGridCsv": [
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-						0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,2,1,1,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

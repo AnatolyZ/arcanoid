@@ -12,7 +12,7 @@ pub fn add_brick_textures(
     bricks_query: Query<(Entity, &Brick, &Transform), Added<Brick>>,
 ) {
     for (brick_entity, brick, transform) in bricks_query.iter() {
-        let texture = match brick.brick_type {
+        let sprite = match brick.brick_type {
             BrickType::Sand => textures.sand.clone(),
             BrickType::Stone => textures.stone.clone(),
             BrickType::Rock => textures.rock.clone(),
@@ -20,10 +20,13 @@ pub fn add_brick_textures(
         };
         log::info!("Brick Entity: {:?}", brick_entity);
         commands.entity(brick_entity).insert((
-            SpriteSheetBundle {
-                texture_atlas: texture,
+            SpriteBundle {
+                texture: sprite.texture,
                 transform: *transform,
-                sprite: TextureAtlasSprite::new(0), // always spawn a brick without a crack
+                ..Default::default()
+            },
+            TextureAtlas {
+                layout: sprite.layout,
                 ..Default::default()
             },
             RigidBody::Fixed,
@@ -35,10 +38,10 @@ pub fn add_brick_textures(
 pub fn collision_handler(
     mut commands: Commands,
     mut collisions: EventReader<CollisionEvent>,
-    mut brick_query: Query<(&mut TextureAtlasSprite, &mut Brick)>,
+    mut brick_query: Query<(&mut TextureAtlas, &mut Brick)>,
     mut ball_speed_query: Query<&mut Velocity, With<Ball>>,
 ) {
-    for ev in collisions.iter() {
+    for ev in collisions.read() {
         if let CollisionEvent::Started(entity1, entity2, _) = ev {
             log::info!("Collision detected!");
             let (brick_entity, mut ball_speed, mut sprite, mut brick) = {

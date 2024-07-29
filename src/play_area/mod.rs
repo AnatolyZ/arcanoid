@@ -14,8 +14,8 @@ impl Plugin for PlayAreaPlugin {
             0.25,
             TimerMode::Repeating,
         )))
-        .insert_resource(LevelSelection::Index(0))
-        .add_systems(Startup, systems::spawn_camera)
+        .insert_resource(LevelSelection::Indices(LevelIndices::in_root(0)))
+        .add_systems(OnEnter(GameState::SpawnCamera), systems::spawn_camera)
         .add_systems(
             OnEnter(GameState::Setup),
             (
@@ -28,6 +28,7 @@ impl Plugin for PlayAreaPlugin {
         .add_systems(
             Update,
             (
+                systems::transition_to_menu.run_if(in_state(GameState::SpawnCamera)),
                 systems::tick_animation.run_if(in_state(GameState::Game)),
                 systems::collision_handler.run_if(in_state(GameState::Game)),
             ),

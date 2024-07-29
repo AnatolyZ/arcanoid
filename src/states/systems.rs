@@ -5,7 +5,7 @@ use bevy_rapier2d::prelude::*;
 pub fn pause_game_control(
     app_state: ResMut<State<GameState>>,
     mut next_state: ResMut<NextState<GameState>>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Escape) {
         if *app_state.get() == GameState::Game {
