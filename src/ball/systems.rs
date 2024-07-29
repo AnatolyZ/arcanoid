@@ -32,13 +32,13 @@ pub fn launch_ball(
     mut commands: Commands,
     mut ball_query: Query<(Entity, &mut Velocity, &mut Transform, &mut Ball)>,
     mut platform_query: Query<(Entity, &Transform, &Velocity, &Platform), Without<Ball>>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
     for (ball_entity, mut velocity, mut ball_transform, mut ball) in ball_query.iter_mut() {
         if ball.lay_on_platform {
             let (platform_entity, platform_transform, platform_velocity, platform) =
                 platform_query.single_mut();
-            if keyboard_input.just_pressed(KeyCode::Up)
+            if keyboard_input.just_pressed(KeyCode::ArrowUp)
                 || keyboard_input.just_pressed(KeyCode::Space)
             {
                 ball.lay_on_platform = false;

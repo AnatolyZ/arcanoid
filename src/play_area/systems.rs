@@ -94,15 +94,19 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
     ) {
         commands.spawn((
             Background {},
-            SpriteSheetBundle {
-                texture_atlas: textures.industrial.clone(),
-                sprite: {
-                    let mut sprite = TextureAtlasSprite::new(sprite_index);
-                    sprite.flip_x = flip_x;
-                    sprite.flip_y = flip_y;
-                    sprite
-                },
+            SpriteBundle {
+                texture: textures.industrial.texture.clone(),
                 transform: Transform::from_xyz(x, y, 2.0),
+                sprite: Sprite {
+                    flip_x,
+                    flip_y,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            TextureAtlas {
+                layout: textures.industrial.layout.clone(),
+                index: sprite_index,
                 ..Default::default()
             },
         ));
@@ -119,10 +123,14 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         for y in (bottom as i32..top as i32 + TILE_SIZE as i32).step_by(TILE_SIZE as usize) {
             commands.spawn((
                 Background {},
-                SpriteSheetBundle {
-                    texture_atlas: textures.industrial.clone(),
-                    sprite: TextureAtlasSprite::new(sprite_index),
+                SpriteBundle {
+                    texture: textures.industrial.texture.clone(),
                     transform: Transform::from_xyz(x, y as f32, 2.0),
+                    ..Default::default()
+                },
+                TextureAtlas {
+                    layout: textures.industrial.layout.clone(),
+                    index: sprite_index,
                     ..Default::default()
                 },
             ));
@@ -140,10 +148,14 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         for x in (left as i32..right as i32 + TILE_SIZE as i32).step_by(TILE_SIZE as usize) {
             commands.spawn((
                 Background {},
-                SpriteSheetBundle {
-                    texture_atlas: textures.industrial.clone(),
-                    sprite: TextureAtlasSprite::new(sprite_index),
+                SpriteBundle {
+                    texture: textures.industrial.texture.clone(),
                     transform: Transform::from_xyz(x as f32, y, 2.0),
+                    ..Default::default()
+                },
+                TextureAtlas {
+                    layout: textures.industrial.layout.clone(),
+                    index: sprite_index,
                     ..Default::default()
                 },
             ));
@@ -325,23 +337,14 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
     // draw animated drainings
     commands.spawn((
         Background {},
-        SpriteSheetBundle {
-            texture_atlas: textures.industrial.clone(),
-            sprite: TextureAtlasSprite::new(78),
+        SpriteBundle {
+            texture: textures.industrial.texture.clone(),
             transform: Transform::from_xyz(left, bottom + TILE_SIZE, 2.0),
             ..Default::default()
         },
-        Animation {
-            phase: 0,
-            sprites: vec![78, 79],
-        },
-    ));
-    commands.spawn((
-        Background {},
-        SpriteSheetBundle {
-            texture_atlas: textures.industrial.clone(),
-            sprite: TextureAtlasSprite::new(78),
-            transform: Transform::from_xyz(right, bottom + TILE_SIZE, 2.0),
+        TextureAtlas {
+            layout: textures.industrial.layout.clone(),
+            index: 78,
             ..Default::default()
         },
         Animation {
@@ -351,10 +354,31 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
     ));
     commands.spawn((
         Background {},
-        SpriteSheetBundle {
-            texture_atlas: textures.industrial.clone(),
-            sprite: TextureAtlasSprite::new(94),
+        SpriteBundle {
+            texture: textures.industrial.texture.clone(),
+            transform: Transform::from_xyz(right, bottom + TILE_SIZE, 2.0),
+            ..Default::default()
+        },
+        TextureAtlas {
+            layout: textures.industrial.layout.clone(),
+            index: 78,
+            ..Default::default()
+        },
+        Animation {
+            phase: 0,
+            sprites: vec![78, 79],
+        },
+    ));
+    commands.spawn((
+        Background {},
+        SpriteBundle {
+            texture: textures.industrial.texture.clone(),
             transform: Transform::from_xyz(left, bottom, 2.0),
+            ..Default::default()
+        },
+        TextureAtlas {
+            layout: textures.industrial.layout.clone(),
+            index: 94,
             ..Default::default()
         },
         Animation {
@@ -364,10 +388,14 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
     ));
     commands.spawn((
         Background {},
-        SpriteSheetBundle {
-            texture_atlas: textures.industrial.clone(),
-            sprite: TextureAtlasSprite::new(94),
+        SpriteBundle {
+            texture: textures.industrial.texture.clone(),
             transform: Transform::from_xyz(right, bottom, 2.0),
+            ..Default::default()
+        },
+        TextureAtlas {
+            layout: textures.industrial.layout.clone(),
+            index: 94,
             ..Default::default()
         },
         Animation {
@@ -379,10 +407,14 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
     for x in (left as i32 + TILE_SIZE as i32..right as i32).step_by(TILE_SIZE as usize) {
         commands.spawn((
             Background {},
-            SpriteSheetBundle {
-                texture_atlas: textures.industrial.clone(),
-                sprite: TextureAtlasSprite::new(13),
+            SpriteBundle {
+                texture: textures.industrial.texture.clone(),
                 transform: Transform::from_xyz(x as f32, bottom, 4.0),
+                ..Default::default()
+            },
+            TextureAtlas {
+                layout: textures.industrial.layout.clone(),
+                index: 13,
                 ..Default::default()
             },
             Animation {
@@ -396,7 +428,7 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
 pub fn tick_animation(
     time: Res<Time>,
     mut timer: ResMut<AnimationTimer>,
-    mut query: Query<(&mut Animation, &mut TextureAtlasSprite)>,
+    mut query: Query<(&mut Animation, &mut TextureAtlas)>,
 ) {
     if timer.tick(time.delta()).just_finished() {
         for (mut animation, mut sprite) in query.iter_mut() {
@@ -423,7 +455,7 @@ pub fn collision_handler(
     mut collisions: EventReader<CollisionEvent>,
     mut out_sensor_query: Query<Entity, With<OutSensor>>,
 ) {
-    for ev in collisions.iter() {
+    for ev in collisions.read() {
         if let CollisionEvent::Started(entity1, entity2, _) = ev {
             if out_sensor_query.get_mut(*entity1).is_ok()
                 || out_sensor_query.get_mut(*entity2).is_ok()
@@ -456,4 +488,8 @@ pub fn despawn_ldtk_world(
     for entity in ldtk_world_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
+}
+
+pub fn transition_to_menu(mut app_state: ResMut<NextState<GameState>>) {
+    app_state.set(GameState::Menu);
 }

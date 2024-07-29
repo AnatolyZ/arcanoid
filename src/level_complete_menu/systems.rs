@@ -43,7 +43,7 @@ pub fn spawn_level_complete_menu(textures: Res<Textures>, mut commands: Commands
                     style: TextStyle {
                         font: textures.font.clone(),
                         font_size: 140.0,
-                        color: Color::GREEN,
+                        color: Color::srgb(0.0, 1.0, 0.0),
                     },
                 },
                 TextSection {
@@ -59,7 +59,7 @@ pub fn spawn_level_complete_menu(textures: Res<Textures>, mut commands: Commands
                     style: TextStyle {
                         font: textures.font.clone(),
                         font_size: 100.0,
-                        color: Color::GREEN,
+                        color: Color::srgb(0.0, 1.0, 0.0),
                     },
                 },
                 TextSection {
@@ -71,7 +71,7 @@ pub fn spawn_level_complete_menu(textures: Res<Textures>, mut commands: Commands
                     },
                 },
             ],
-            alignment: TextAlignment::Center,
+            justify: JustifyText::Center,
             linebreak_behavior: bevy::text::BreakLineOn::NoWrap,
         },
         style: Style {
@@ -102,7 +102,7 @@ pub fn despawn_level_complete_menu(
 
 pub fn wait_for_key_press(
     mut next_state: ResMut<NextState<GameState>>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Space) {
         next_state.set(GameState::Setup);

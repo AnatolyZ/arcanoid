@@ -6,6 +6,8 @@ use bevy::prelude::*;
 #[derive(Default, Copy, Clone, PartialEq, Eq, Hash, Debug, States)]
 pub enum GameState {
     #[default]
+    LoadTextures,
+    SpawnCamera,
     Menu,
     Setup,
     Game,

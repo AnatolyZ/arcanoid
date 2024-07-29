@@ -31,7 +31,6 @@ pub const SCREEN_WIDTH: f32 = SCREEN_WIDTH_TILES * TILE_SIZE; // width of the ga
 
 fn main() {
     App::new()
-        .add_state::<GameState>()
         .add_plugins((
             DefaultPlugins.set(WindowPlugin {
                 primary_window: Some(Window {
@@ -55,5 +54,6 @@ fn main() {
             LevelCompleteMenuPlugin,
             //RapierDebugRenderPlugin::default(),
         ))
-        .run()
+        .init_state::<GameState>()
+        .run();
 }

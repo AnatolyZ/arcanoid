@@ -31,7 +31,7 @@ pub struct BrickBundle {
     pub collider_bundle: ColliderBundle,
 }
 
-#[derive(Bundle, LdtkIntCell)]
+#[derive(Bundle, Default, LdtkIntCell)]
 pub struct ColliderBundle {
     pub collider: Collider,
     pub rigid_body: RigidBody,

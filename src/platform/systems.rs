@@ -18,10 +18,14 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
             Platform {
                 length: PLATFORM_DEFAULT_LENGTH,
             },
-            SpriteSheetBundle {
-                texture_atlas: textures.industrial.clone(),
-                sprite: TextureAtlasSprite::new(PLATFORM_FIRST_TILE),
+            SpriteBundle {
+                texture: textures.industrial.texture.clone(),
                 transform: Transform::from_xyz(0.0, -window.height() / 2.0 + TILE_SIZE, 1.0),
+                ..Default::default()
+            },
+            TextureAtlas {
+                layout: textures.industrial.layout.clone(),
+                index: PLATFORM_FIRST_TILE,
                 ..Default::default()
             },
             RigidBody::Dynamic,
@@ -53,12 +57,18 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
         .id();
     for i in 1..PLATFORM_DEFAULT_LENGTH - 1 {
         let middle_tile_entity = commands
-            .spawn((SpriteSheetBundle {
-                texture_atlas: textures.industrial.clone(),
-                sprite: TextureAtlasSprite::new(PLATFORM_MIDDLE_TILE),
-                transform: Transform::from_xyz(TILE_SIZE * i as f32, 0.0, 0.0),
-                ..Default::default()
-            },))
+            .spawn((
+                SpriteBundle {
+                    texture: textures.industrial.texture.clone(),
+                    transform: Transform::from_xyz(TILE_SIZE * i as f32, 0.0, 0.0),
+                    ..Default::default()
+                },
+                TextureAtlas {
+                    layout: textures.industrial.layout.clone(),
+                    index: PLATFORM_MIDDLE_TILE,
+                    ..Default::default()
+                },
+            ))
             .id();
         commands
             .entity(platform_entity)
@@ -66,14 +76,18 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
     }
     let last_tile_entity = commands
         .spawn((
-            SpriteSheetBundle {
-                texture_atlas: textures.industrial.clone(),
-                sprite: TextureAtlasSprite::new(PLATFORM_LAST_TILE),
+            SpriteBundle {
+                texture: textures.industrial.texture.clone(),
                 transform: Transform::from_xyz(
                     TILE_SIZE * (PLATFORM_DEFAULT_LENGTH - 1) as f32,
                     0.0,
                     0.0,
                 ),
+                ..Default::default()
+            },
+            TextureAtlas {
+                layout: textures.industrial.layout.clone(),
+                index: PLATFORM_LAST_TILE,
                 ..Default::default()
             },
             Restitution::new(0.2),
@@ -123,15 +137,15 @@ pub fn spawn_ball_on_platform(
 
 pub fn move_platform(
     mut query: Query<&mut ExternalImpulse, With<Platform>>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
     for mut binding in query.iter_mut() {
         let force = binding.as_mut();
-        if keyboard_input.pressed(KeyCode::Left) {
-            force.impulse = Vec2::new(-3.0, 0.0);
+        if keyboard_input.pressed(KeyCode::ArrowLeft) || keyboard_input.pressed(KeyCode::KeyA) {
+            force.impulse = Vec2::new(-30000.0, 0.0);
         }
-        if keyboard_input.pressed(KeyCode::Right) {
-            force.impulse = Vec2::new(3.0, 0.0);
+        if keyboard_input.pressed(KeyCode::ArrowRight) || keyboard_input.pressed(KeyCode::KeyD) {
+            force.impulse = Vec2::new(30000.0, 0.0);
         }
     }
 }
