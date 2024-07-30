@@ -26,7 +26,6 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
             TextureAtlas {
                 layout: textures.industrial.layout.clone(),
                 index: PLATFORM_FIRST_TILE,
-                ..Default::default()
             },
             RigidBody::Dynamic,
             ExternalImpulse {
@@ -66,7 +65,6 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
                 TextureAtlas {
                     layout: textures.industrial.layout.clone(),
                     index: PLATFORM_MIDDLE_TILE,
-                    ..Default::default()
                 },
             ))
             .id();
@@ -88,7 +86,6 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
             TextureAtlas {
                 layout: textures.industrial.layout.clone(),
                 index: PLATFORM_LAST_TILE,
-                ..Default::default()
             },
             Restitution::new(0.2),
         ))
