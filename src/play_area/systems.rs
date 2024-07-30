@@ -107,7 +107,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
             TextureAtlas {
                 layout: textures.industrial.layout.clone(),
                 index: sprite_index,
-                ..Default::default()
             },
         ));
     }
@@ -131,7 +130,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
                 TextureAtlas {
                     layout: textures.industrial.layout.clone(),
                     index: sprite_index,
-                    ..Default::default()
                 },
             ));
         }
@@ -156,7 +154,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
                 TextureAtlas {
                     layout: textures.industrial.layout.clone(),
                     index: sprite_index,
-                    ..Default::default()
                 },
             ));
         }
@@ -345,7 +342,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         TextureAtlas {
             layout: textures.industrial.layout.clone(),
             index: 78,
-            ..Default::default()
         },
         Animation {
             phase: 0,
@@ -362,7 +358,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         TextureAtlas {
             layout: textures.industrial.layout.clone(),
             index: 78,
-            ..Default::default()
         },
         Animation {
             phase: 0,
@@ -379,7 +374,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         TextureAtlas {
             layout: textures.industrial.layout.clone(),
             index: 94,
-            ..Default::default()
         },
         Animation {
             phase: 0,
@@ -396,7 +390,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
         TextureAtlas {
             layout: textures.industrial.layout.clone(),
             index: 94,
-            ..Default::default()
         },
         Animation {
             phase: 0,
@@ -415,7 +408,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
             TextureAtlas {
                 layout: textures.industrial.layout.clone(),
                 index: 13,
-                ..Default::default()
             },
             Animation {
                 phase: 0,
