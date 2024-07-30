@@ -6,7 +6,7 @@ use super::components::OutSensor;
 use super::resources::AnimationTimer;
 use crate::states::GameState;
 use crate::{
-    textures::{self, BACKGROUND_HEIGHT, BACKGROUND_WIDTH, HALF_TILE_SIZE, TILE_SIZE},
+    textures::{self, HALF_TILE_SIZE, TILE_SIZE},
     SCREEN_HEIGHT, SCREEN_WIDTH,
 };
 use bevy::math::bool;
@@ -158,18 +158,6 @@ pub fn spawn_background(mut commands: Commands, textures: Res<Textures>) {
             ));
         }
     }
-    // draw background
-    let x_scale = SCREEN_WIDTH / BACKGROUND_WIDTH;
-    let y_scale = SCREEN_HEIGHT / BACKGROUND_HEIGHT;
-    commands.spawn((
-        Background {},
-        SpriteBundle {
-            texture: textures.background.clone(),
-            transform: Transform::from_xyz(0.0, 0.0, 0.0)
-                .with_scale(Vec3::new(x_scale, y_scale, 1.0)),
-            ..Default::default()
-        },
-    ));
 
     // sedes of the screen panels
     draw_vertical_line(
@@ -436,7 +424,7 @@ pub fn load_ldtk_world(mut commands: Commands, asset_server: Res<AssetServer>) {
         LdtkWorld {},
         LdtkWorldBundle {
             ldtk_handle: asset_server.load("levels.ldtk"),
-            transform: Transform::from_xyz(-SCREEN_WIDTH / 2.0, -SCREEN_HEIGHT / 2.0, 0.0),
+            transform: Transform::from_xyz(-SCREEN_WIDTH / 2.0, -SCREEN_HEIGHT / 2.0, -10.0),
             ..Default::default()
         },
     ));

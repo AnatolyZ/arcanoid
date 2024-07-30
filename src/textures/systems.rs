@@ -15,8 +15,6 @@ pub fn load_textures(
     let bevy_logo: Handle<Image> = assets_server.load("bevy_logo.png");
     let rapier_logo: Handle<Image> = assets_server.load("rapier_logo.png");
 
-    let background: Handle<Image> = assets_server.load("background.png");
-
     let industrial_texture_handle: Handle<Image> = assets_server.load("industrial_tiles.png");
     let texture_atlas = TextureAtlasLayout::from_grid(
         UVec2::new(TILE_SIZE as u32, TILE_SIZE as u32),
@@ -71,7 +69,6 @@ pub fn load_textures(
 
     commands.insert_resource(Textures {
         ball,
-        background,
         industrial: SpriteSheet {
             layout: industrial_layout,
             texture: industrial_texture_handle,
