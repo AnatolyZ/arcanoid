@@ -9,7 +9,6 @@ pub struct SpriteSheet {
 #[derive(Resource)]
 pub struct Textures {
     pub ball: Handle<Image>,
-    pub background: Handle<Image>,
     pub industrial: SpriteSheet,
     pub sand: SpriteSheet,
     pub marble: SpriteSheet,
