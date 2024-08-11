@@ -1,4 +1,4 @@
-use super::{resources::SetupTimer, GameState};
+use super::GameState;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
@@ -22,18 +22,4 @@ pub fn on_enter_game(mut rapier_config: ResMut<RapierConfiguration>) {
 
 pub fn on_exit_game(mut rapier_config: ResMut<RapierConfiguration>) {
     rapier_config.physics_pipeline_active = false;
-}
-
-pub fn tick_setup_timer(
-    time: Res<Time>,
-    mut timer: ResMut<SetupTimer>,
-    mut next_state: ResMut<NextState<GameState>>,
-) {
-    if timer.0.tick(time.delta()).just_finished() {
-        next_state.set(GameState::Game);
-    }
-}
-
-pub fn reset_setup_timer(mut timer: ResMut<SetupTimer>) {
-    timer.0.reset();
 }

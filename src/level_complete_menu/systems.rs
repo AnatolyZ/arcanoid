@@ -1,6 +1,8 @@
 use crate::brick::Brick;
 use crate::textures::resources::Textures;
 use bevy::prelude::*;
+use bevy_ecs_ldtk::assets::{LdtkProject, LevelIndices};
+use bevy_ecs_ldtk::LevelSelection;
 
 use super::components::LevelCompleteMenu;
 use crate::states::GameState;
@@ -94,10 +96,35 @@ pub fn spawn_level_complete_menu(textures: Res<Textures>, mut commands: Commands
 pub fn despawn_level_complete_menu(
     mut commands: Commands,
     level_complete_menu_query: Query<Entity, With<LevelCompleteMenu>>,
+    ldtk_projects: Query<&Handle<LdtkProject>>,
+    ldtk_project_assets: Res<Assets<LdtkProject>>,
+    mut level_selection: ResMut<LevelSelection>,
 ) {
     for entity in level_complete_menu_query.iter() {
         commands.entity(entity).despawn_recursive();
     }
+    let current_level = match level_selection.as_ref() {
+        LevelSelection::Indices(level_indices) => level_indices,
+        _ => panic!("Expected LevelSelection::Indices"),
+    };
+
+    let ldtk_project = ldtk_project_assets
+        .get(ldtk_projects.single())
+        .expect("ldtk project should be loaded before player is spawned");
+
+    let levels_count = ldtk_project
+        .data()
+        .as_standalone()
+        .iter_loaded_levels()
+        .count()
+        - 1;
+    let next_level = if current_level.level == levels_count {
+        LevelIndices::in_root(0)
+    } else {
+        LevelIndices::in_root(current_level.level + 1)
+    };
+
+    *level_selection = LevelSelection::Indices(next_level);
 }
 
 pub fn wait_for_key_press(
