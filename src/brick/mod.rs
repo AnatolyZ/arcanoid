@@ -1,3 +1,4 @@
+use crate::states::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
@@ -13,7 +14,13 @@ impl Plugin for BricksPlugin {
             .register_ldtk_int_cell_for_layer::<components::BrickBundle>("Bricks", 2)
             .register_ldtk_int_cell_for_layer::<components::BrickBundle>("Bricks", 3)
             .register_ldtk_int_cell_for_layer::<components::BrickBundle>("Bricks", 4)
-            .add_systems(Update, systems::add_brick_textures)
-            .add_systems(Update, systems::collision_handler);
+            .add_systems(
+                Update,
+                systems::add_brick_textures.run_if(in_state(GameState::Setup)),
+            )
+            .add_systems(
+                Update,
+                systems::collision_handler.run_if(in_state(GameState::Game)),
+            );
     }
 }

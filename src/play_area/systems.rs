@@ -423,6 +423,7 @@ pub fn load_ldtk_world(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         LdtkWorld {},
         LdtkWorldBundle {
+            // TODO: Load only once
             ldtk_handle: asset_server.load("levels.ldtk"),
             transform: Transform::from_xyz(-SCREEN_WIDTH / 2.0, -SCREEN_HEIGHT / 2.0, -10.0),
             ..Default::default()

@@ -1,5 +1,6 @@
 use super::components::{Brick, BrickType};
 use crate::ball::Ball;
+use crate::states::GameState;
 use crate::textures::{resources::Textures, HALF_BRICK_TILE_SIZE};
 use bevy::log;
 use bevy::prelude::*;
@@ -10,6 +11,7 @@ pub fn add_brick_textures(
     mut commands: Commands,
     textures: ResMut<Textures>,
     bricks_query: Query<(Entity, &Brick, &Transform), Added<Brick>>,
+    mut next_state: ResMut<NextState<GameState>>,
 ) {
     for (brick_entity, brick, transform) in bricks_query.iter() {
         let sprite = match brick.brick_type {
@@ -32,6 +34,9 @@ pub fn add_brick_textures(
             RigidBody::Fixed,
             Collider::cuboid(HALF_BRICK_TILE_SIZE, HALF_BRICK_TILE_SIZE),
         ));
+    }
+    if bricks_query.iter().count() != 0 {
+        next_state.set(GameState::Game);
     }
 }
 
