@@ -3,6 +3,7 @@ mod brick;
 mod game_over_menu;
 mod level_complete_menu;
 mod main_menu;
+mod pause_menu;
 mod platform;
 mod play_area;
 mod states;
@@ -18,6 +19,7 @@ use brick::BricksPlugin;
 use game_over_menu::GameOverMenuPlugin;
 use level_complete_menu::LevelCompleteMenuPlugin;
 use main_menu::MainMenuPlugin;
+use pause_menu::PauseMenuPlugin;
 use platform::PlatformPlugin;
 use play_area::PlayAreaPlugin;
 use states::GameState;
@@ -44,6 +46,7 @@ fn main() {
             LdtkPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
             MainMenuPlugin,
+            PauseMenuPlugin,
             GameOverMenuPlugin,
             PlatformPlugin,
             BallPlugin,

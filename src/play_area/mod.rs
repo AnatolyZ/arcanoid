@@ -44,6 +44,14 @@ impl Plugin for PlayAreaPlugin {
             ),
         )
         .add_systems(
+            OnEnter(GameState::Menu),
+            (
+                systems::despawn_background,
+                systems::despawn_borders,
+                systems::despawn_ldtk_world,
+            ),
+        )
+        .add_systems(
             OnExit(GameState::LevelComplete),
             (
                 systems::despawn_background,
