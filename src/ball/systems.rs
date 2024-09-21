@@ -33,6 +33,7 @@ pub fn launch_ball(
     mut ball_query: Query<(Entity, &mut Velocity, &mut Transform, &mut Ball)>,
     mut platform_query: Query<(Entity, &Transform, &Velocity, &Platform), Without<Ball>>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
+    mouse_button: Res<ButtonInput<MouseButton>>,
 ) {
     for (ball_entity, mut velocity, mut ball_transform, mut ball) in ball_query.iter_mut() {
         if ball.lay_on_platform {
@@ -40,6 +41,7 @@ pub fn launch_ball(
                 platform_query.single_mut();
             if keyboard_input.just_pressed(KeyCode::ArrowUp)
                 || keyboard_input.just_pressed(KeyCode::Space)
+                || mouse_button.just_pressed(MouseButton::Left)
             {
                 ball.lay_on_platform = false;
                 velocity.linvel = Vec2::new(platform_velocity.linvel.x, 200.0);

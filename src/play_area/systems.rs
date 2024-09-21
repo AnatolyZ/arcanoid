@@ -2,6 +2,7 @@ use super::components::Animation;
 use super::components::Background;
 use super::components::Border;
 use super::components::LdtkWorld;
+use super::components::MainCamera;
 use super::components::OutSensor;
 use super::resources::AnimationTimer;
 use crate::states::GameState;
@@ -20,7 +21,7 @@ pub fn switch_off_gravity(mut rapier_config: ResMut<RapierConfiguration>) {
 }
 
 pub fn spawn_camera(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn((Camera2dBundle::default(), MainCamera));
 }
 
 pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
