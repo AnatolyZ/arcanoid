@@ -1,18 +1,25 @@
 use super::components::Platform;
 use crate::ball::components::Ball;
+use crate::play_area::MainCamera;
 use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
+use bevy::window::PrimaryWindow;
 use bevy_rapier2d::prelude::*;
 
-const PLATFORM_DEFAULT_LENGTH: u32 = 8;
+const PLATFORM_DEFAULT_LENGTH: u32 = 10;
 const PLATFORM_FIRST_TILE: usize = 4;
 const PLATFORM_MIDDLE_TILE: usize = 5;
 const PLATFORM_LAST_TILE: usize = 6;
 const BALL_SPRITE_RADIUS: f32 = 16.0;
 
+fn get_plarform_center_x_offset(platform_length: u32) -> f32 {
+    platform_length as f32 * TILE_SIZE / 2.0 - HALF_TILE_SIZE
+}
+
 pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures: Res<Textures>) {
     let window = windows.single();
 
+    let center_offset = get_plarform_center_x_offset(PLATFORM_DEFAULT_LENGTH) * -1f32;
     let platform_entity = commands
         .spawn((
             Platform {
@@ -20,7 +27,11 @@ pub fn spawn_platform(mut commands: Commands, windows: Query<&Window>, textures:
             },
             SpriteBundle {
                 texture: textures.industrial.texture.clone(),
-                transform: Transform::from_xyz(0.0, -window.height() / 2.0 + TILE_SIZE, 1.0),
+                transform: Transform::from_xyz(
+                    center_offset,
+                    -window.height() / 2.0 + TILE_SIZE,
+                    1.0,
+                ),
                 ..Default::default()
             },
             TextureAtlas {
@@ -133,16 +144,37 @@ pub fn spawn_ball_on_platform(
 }
 
 pub fn move_platform(
-    mut query: Query<&mut ExternalImpulse, With<Platform>>,
+    mut query: Query<(
+        &mut ExternalImpulse,
+        &mut Velocity,
+        &GlobalTransform,
+        &Platform,
+    )>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
+    window: Query<&Window, With<PrimaryWindow>>,
+    camera_query: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
 ) {
-    for mut binding in query.iter_mut() {
+    let window = window.single();
+    let (camera, camera_transform) = camera_query.single();
+    let cursor_position = window
+        .cursor_position()
+        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
+        .map(|ray| ray.origin.truncate());
+
+    for (mut binding, mut velocity, transform, platform) in query.iter_mut() {
         let force = binding.as_mut();
         if keyboard_input.pressed(KeyCode::ArrowLeft) || keyboard_input.pressed(KeyCode::KeyA) {
             force.impulse = Vec2::new(-30000.0, 0.0);
         }
         if keyboard_input.pressed(KeyCode::ArrowRight) || keyboard_input.pressed(KeyCode::KeyD) {
             force.impulse = Vec2::new(30000.0, 0.0);
+        }
+
+        if let Some(cursor_position) = cursor_position {
+            let diff = cursor_position.x
+                - transform.translation().x
+                - get_plarform_center_x_offset(platform.length);
+            velocity.linvel = Vec2::new(diff * 10.0, 0.0);
         }
     }
 }

@@ -6,6 +6,8 @@ use crate::states::GameState;
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+pub use components::MainCamera;
+
 pub struct PlayAreaPlugin;
 
 impl Plugin for PlayAreaPlugin {
