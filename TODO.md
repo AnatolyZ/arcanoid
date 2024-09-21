@@ -1,7 +1,7 @@
 # TODO List
 
 ## Core Features to Implement
-- [ ] Add game pause menu
+- [x] Add game pause menu
 - [ ] Add lifes system
 - [ ] Add sounds system
 - [ ] Buffs/debuffs system
@@ -23,6 +23,9 @@
 ## Additional Features to Implement
 - [ ] Design new levels
 - [ ] Full-screen mode
+
+## Refactoring
+- [ ] Put all menus in a single module
 
 ## Bugs to Fix
 - [ ] Fix platform spawning after window resizing or forbid resizing
