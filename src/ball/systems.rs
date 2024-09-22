@@ -1,4 +1,6 @@
 use super::components::Ball;
+use super::NewBallOnPlatform;
+use crate::lifes::LifeLost;
 use crate::platform::Platform;
 use crate::textures::{HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
@@ -60,5 +62,16 @@ pub fn launch_ball(
 pub fn despawn_balls(mut commands: Commands, ball_query: Query<Entity, With<Ball>>) {
     for entity in ball_query.iter() {
         commands.entity(entity).despawn_recursive();
+    }
+}
+
+pub fn check_balls_count(
+    ball_query: Query<Entity, With<Ball>>,
+    mut life_lost: EventWriter<LifeLost>,
+    check_event: EventReader<NewBallOnPlatform>,
+) {
+    if ball_query.iter().count() == 0 && check_event.is_empty() {
+        life_lost.send(LifeLost);
+        bevy::log::info!("LifeLost event sent");
     }
 }
