@@ -2,6 +2,9 @@ use bevy::log;
 use bevy::prelude::*;
 
 #[derive(Component)]
+pub struct LifeIcon;
+
+#[derive(Component, Debug)]
 pub struct Lifes {
     lifes: u32,
     initial_lifes: u32,
@@ -43,5 +46,9 @@ impl Lifes {
 
     pub fn is_empty(&self) -> bool {
         self.lifes == 0
+    }
+
+    pub fn lifes(&self) -> u32 {
+        self.lifes
     }
 }

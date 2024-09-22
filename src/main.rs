@@ -47,7 +47,7 @@ fn main() {
             //WorldInspectorPlugin::new(),
             LdtkPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
-            LifesPlugin::new(3),
+            LifesPlugin::new(10),
             MainMenuPlugin,
             PauseMenuPlugin,
             GameOverMenuPlugin,
