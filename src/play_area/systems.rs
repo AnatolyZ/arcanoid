@@ -433,16 +433,19 @@ pub fn load_ldtk_world(mut commands: Commands, asset_server: Res<AssetServer>) {
 }
 
 pub fn collision_handler(
-    mut next_state: ResMut<NextState<GameState>>,
+    mut commands: Commands,
     mut collisions: EventReader<CollisionEvent>,
     mut out_sensor_query: Query<Entity, With<OutSensor>>,
 ) {
     for ev in collisions.read() {
         if let CollisionEvent::Started(entity1, entity2, _) = ev {
-            if out_sensor_query.get_mut(*entity1).is_ok()
-                || out_sensor_query.get_mut(*entity2).is_ok()
-            {
-                next_state.set(GameState::OverOver);
+            if out_sensor_query.get_mut(*entity1).is_ok() {
+                // entity1 is the out sensor, so entity2 is the ball
+                commands.entity(*entity2).despawn_recursive();
+            }
+            if out_sensor_query.get_mut(*entity2).is_ok() {
+                // entity2 is the out sensor, so entity1 is the ball
+                commands.entity(*entity1).despawn_recursive();
             }
         }
     }

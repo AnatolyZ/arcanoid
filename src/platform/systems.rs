@@ -1,5 +1,6 @@
 use super::components::Platform;
 use crate::ball::components::Ball;
+use crate::ball::NewBallOnPlatform;
 use crate::play_area::MainCamera;
 use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
 use bevy::prelude::*;
@@ -182,5 +183,17 @@ pub fn move_platform(
 pub fn despawn_platform(mut commands: Commands, platform_query: Query<Entity, With<Platform>>) {
     for entity in platform_query.iter() {
         commands.entity(entity).despawn_recursive();
+    }
+}
+
+pub fn new_ball_check(
+    commands: Commands,
+    textures: Res<Textures>,
+    platform_query: Query<(Entity, &Platform)>,
+    mut new_ball_events: EventReader<NewBallOnPlatform>,
+) {
+    if new_ball_events.read().count() > 0 {
+        let (platform_entity, platform) = platform_query.single();
+        spawn_ball_on_platform(commands, textures, platform_entity, platform.length);
     }
 }
