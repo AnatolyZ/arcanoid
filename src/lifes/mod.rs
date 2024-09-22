@@ -28,7 +28,7 @@ impl Plugin for LifesPlugin {
         .add_systems(OnExit(GameState::OverOver), systems::reset_lifes)
         .add_systems(
             Update,
-            systems::update_lifes_count.run_if(in_state(GameState::Game)),
+            (systems::redraw_lifes, systems::update_lifes_count).run_if(in_state(GameState::Game)),
         );
     }
 }
