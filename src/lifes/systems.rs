@@ -15,7 +15,7 @@ use super::resources::LifesSettings;
 use super::LifeLost;
 
 pub fn spawn_lifes(mut commands: Commands, lifes_settings: Res<LifesSettings>) {
-    commands.spawn(Lifes::new(lifes_settings.initial_lifes, 10));
+    commands.spawn(Lifes::new(lifes_settings.initial_lifes));
     log::info!("Lifes spawned with {} lifes", lifes_settings.initial_lifes);
 }
 
