@@ -2,6 +2,7 @@ mod ball;
 mod brick;
 mod game_over_menu;
 mod level_complete_menu;
+mod lifes;
 mod main_menu;
 mod pause_menu;
 mod platform;
@@ -17,6 +18,7 @@ use bevy_rapier2d::prelude::*;
 use ball::BallPlugin;
 use brick::BricksPlugin;
 use game_over_menu::GameOverMenuPlugin;
+use lifes::LifesPlugin;
 use level_complete_menu::LevelCompleteMenuPlugin;
 use main_menu::MainMenuPlugin;
 use pause_menu::PauseMenuPlugin;
@@ -45,6 +47,7 @@ fn main() {
             //WorldInspectorPlugin::new(),
             LdtkPlugin,
             RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0),
+            LifesPlugin::new(3),
             MainMenuPlugin,
             PauseMenuPlugin,
             GameOverMenuPlugin,
