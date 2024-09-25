@@ -2,7 +2,7 @@
 
 ## Core Features to Implement
 - [x] Add game pause menu
-- [ ] Add lifes system
+- [x] Add lifes system
 - [ ] Add sounds system
 - [ ] Buffs/debuffs system
 - [ ] Add control settings

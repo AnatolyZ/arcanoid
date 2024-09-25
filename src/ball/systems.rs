@@ -1,8 +1,7 @@
 use super::components::Ball;
 use super::NewBallOnPlatform;
 use crate::lifes::LifeLost;
-use crate::platform::Platform;
-use crate::textures::{HALF_TILE_SIZE, TILE_SIZE};
+use crate::textures::HALF_TILE_SIZE;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
@@ -33,13 +32,13 @@ pub fn confine_ball_speed(mut query: Query<(&mut Velocity, &Ball)>) {
 pub fn launch_ball(
     mut commands: Commands,
     mut ball_query: Query<(Entity, &mut Velocity, &mut Transform, &mut Ball)>,
-    mut platform_query: Query<(Entity, &Transform, &Velocity, &Platform), Without<Ball>>,
+    mut platform_query: Query<(Entity, &Transform, &Velocity), Without<Ball>>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mouse_button: Res<ButtonInput<MouseButton>>,
 ) {
     for (ball_entity, mut velocity, mut ball_transform, mut ball) in ball_query.iter_mut() {
         if ball.lay_on_platform {
-            let (platform_entity, platform_transform, platform_velocity, platform) =
+            let (platform_entity, platform_transform, platform_velocity) =
                 platform_query.single_mut();
             if keyboard_input.just_pressed(KeyCode::ArrowUp)
                 || keyboard_input.just_pressed(KeyCode::Space)
@@ -49,8 +48,7 @@ pub fn launch_ball(
                 velocity.linvel = Vec2::new(platform_velocity.linvel.x, 200.0);
                 ball_transform.translation.y =
                     platform_transform.translation.y + ball.radius + HALF_TILE_SIZE;
-                ball_transform.translation.x = platform_transform.translation.x - HALF_TILE_SIZE
-                    + platform.length as f32 * TILE_SIZE / 2.0;
+                ball_transform.translation.x = platform_transform.translation.x;
                 commands
                     .entity(platform_entity)
                     .remove_children(&[ball_entity]);
