@@ -8,14 +8,16 @@ pub struct LifeIcon;
 pub struct Lifes {
     lifes: u32,
     initial_lifes: u32,
+    pub life_lost_sound: Handle<AudioSource>,
 }
 
 impl Lifes {
-    pub fn new(initial_lifes: u32) -> Self {
+    pub fn new(initial_lifes: u32, life_lost_sound: Handle<AudioSource>) -> Self {
         log::info!("Lifes initialized with {} lifes", initial_lifes);
         Self {
             lifes: initial_lifes,
             initial_lifes,
+            life_lost_sound,
         }
     }
 

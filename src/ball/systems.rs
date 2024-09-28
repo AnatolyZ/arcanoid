@@ -70,6 +70,5 @@ pub fn check_balls_count(
 ) {
     if ball_query.iter().count() == 0 && check_event.is_empty() {
         life_lost.send(LifeLost);
-        bevy::log::info!("LifeLost event sent");
     }
 }

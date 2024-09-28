@@ -14,8 +14,15 @@ use super::components::Lifes;
 use super::resources::LifesSettings;
 use super::LifeLost;
 
-pub fn spawn_lifes(mut commands: Commands, lifes_settings: Res<LifesSettings>) {
-    commands.spawn(Lifes::new(lifes_settings.initial_lifes));
+pub fn spawn_lifes(
+    mut commands: Commands,
+    lifes_settings: Res<LifesSettings>,
+    assets_serfer: Res<AssetServer>,
+) {
+    commands.spawn(Lifes::new(
+        lifes_settings.initial_lifes,
+        assets_serfer.load("sounds/life_lost.ogg"),
+    ));
     log::info!("Lifes spawned with {} lifes", lifes_settings.initial_lifes);
 }
 
@@ -26,6 +33,7 @@ pub fn despawn_lifes(mut commands: Commands, query: Query<Entity, With<Lifes>>) 
 }
 
 pub fn update_lifes_count(
+    mut commands: Commands,
     mut lifes_query: Query<&mut Lifes>,
     mut life_lost_events: EventReader<LifeLost>,
     mut new_ball_event: EventWriter<NewBallOnPlatform>,
@@ -34,9 +42,18 @@ pub fn update_lifes_count(
     let mut lifes = lifes_query.single_mut();
     for _ in life_lost_events.read() {
         lifes.decrease(1);
-        new_ball_event.send(NewBallOnPlatform);
         if lifes.is_empty() {
             next_state.set(GameState::OverOver);
+        } else {
+            new_ball_event.send(NewBallOnPlatform);
+            commands.spawn(AudioBundle {
+                source: lifes.life_lost_sound.clone(),
+                settings: PlaybackSettings {
+                    mode: bevy::audio::PlaybackMode::Despawn,
+                    ..Default::default()
+                },
+                ..Default::default()
+            });
         }
     }
 }

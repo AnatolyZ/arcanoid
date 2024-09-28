@@ -8,7 +8,18 @@ const NORMAL_BUTTON: Color = Color::srgb(0.15, 0.15, 0.15);
 const PRESSED_BUTTON: Color = Color::srgb(0.1, 0.1, 0.1);
 const HOVERED_BUTTON: Color = Color::srgb(0.2, 0.2, 0.2);
 
-pub fn spawn_game_over_menu(commands: Commands, textures: Res<Textures>) {
+pub fn spawn_game_over_menu(
+    mut commands: Commands,
+    textures: Res<Textures>,
+    asset_server: Res<AssetServer>,
+) {
+    commands.spawn(AudioBundle {
+        source: asset_server.load("sounds/game_over.ogg"),
+        settings: PlaybackSettings {
+            mode: bevy::audio::PlaybackMode::Despawn,
+            ..Default::default()
+        },
+    });
     build_game_over_menu(commands, textures);
 }
 

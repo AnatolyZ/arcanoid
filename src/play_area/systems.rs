@@ -35,6 +35,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
 
     commands.spawn((
         Border {},
+        ActiveEvents::COLLISION_EVENTS,
         Collider::cuboid(width / 2.0, HALF_TILE_SIZE),
         Transform::from_xyz(0.0, top, 2.0),
         GlobalTransform::default(),
@@ -45,6 +46,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
     commands.spawn((
         Border {},
+        ActiveEvents::COLLISION_EVENTS,
         Collider::cuboid(HALF_TILE_SIZE, height / 2.0),
         Transform::from_xyz(right, 0.0, 2.0),
         GlobalTransform::default(),
@@ -55,6 +57,7 @@ pub fn spawn_borders(mut commands: Commands, windows: Query<&Window>) {
     ));
     commands.spawn((
         Border {},
+        ActiveEvents::COLLISION_EVENTS,
         Collider::cuboid(HALF_TILE_SIZE, height / 2.0),
         Transform::from_xyz(left, 0.0, 2.0),
         GlobalTransform::default(),
