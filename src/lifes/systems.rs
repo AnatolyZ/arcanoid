@@ -52,7 +52,6 @@ pub fn update_lifes_count(
                     mode: bevy::audio::PlaybackMode::Despawn,
                     ..Default::default()
                 },
-                ..Default::default()
             });
         }
     }
