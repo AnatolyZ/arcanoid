@@ -1,10 +1,12 @@
 use super::components::Platform;
+use crate::ball;
 use crate::ball::components::Ball;
 use crate::ball::NewBallOnPlatform;
 use crate::play_area::Border;
 use crate::play_area::MainCamera;
 use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
 use crate::SCREEN_HEIGHT;
+use bevy::ecs::query::QueryFilter;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use bevy_rapier2d::prelude::*;
@@ -23,7 +25,8 @@ pub fn spawn_platform(
     let platform_entity = commands
         .spawn((
             Platform {
-                collision_sound: asset_server.load("sounds/platform.ogg"),
+                ball_collision_sound: asset_server.load("sounds/ball_platform.ogg"),
+                border_collision_sound: asset_server.load("sounds/border_platform.ogg"),
             },
             RigidBody::Dynamic,
             ExternalImpulse {
@@ -103,19 +106,21 @@ pub fn spawn_platform(
         ))
         .id();
     commands.entity(platform_entity).add_child(last_tile_entity);
-    spawn_ball_on_platform(commands, textures, platform_entity);
+    spawn_ball_on_platform(commands, textures, platform_entity, &asset_server);
 }
 
 pub fn spawn_ball_on_platform(
     mut commands: Commands,
     textures: Res<Textures>,
     platform_entity: Entity,
+    asset_server: &Res<AssetServer>,
 ) {
     let ball_entity = commands
         .spawn((
             Ball {
                 radius: BALL_SPRITE_RADIUS,
                 lay_on_platform: true,
+                border_collision_sound: asset_server.load("sounds/ball_border.ogg"),
             },
             SpriteBundle {
                 texture: textures.ball.clone(),
@@ -180,55 +185,77 @@ pub fn new_ball_check(
     textures: Res<Textures>,
     platform_query: Query<Entity, With<Platform>>,
     mut new_ball_events: EventReader<NewBallOnPlatform>,
+    asset_server: Res<AssetServer>,
 ) {
     if new_ball_events.read().count() > 0 {
         let platform_entity = platform_query.single();
-        spawn_ball_on_platform(commands, textures, platform_entity);
+        spawn_ball_on_platform(commands, textures, platform_entity, &asset_server);
     }
+}
+
+fn get_component<'a, C, F>(
+    entity1: Entity,
+    entity2: Entity,
+    query: &'a Query<&C, F>,
+) -> Option<&'a C>
+where
+    C: Component,
+    F: QueryFilter,
+{
+    if let Ok(component) = query.get(entity1) {
+        return Some(component);
+    }
+    if let Ok(component) = query.get(entity2) {
+        return Some(component);
+    }
+    None
 }
 
 pub fn collision_handler(
     mut commands: Commands,
     mut collisions: EventReader<CollisionEvent>,
-    platform_query: Query<(Entity, &Platform)>,
-    ball_query: Query<(Entity, &Ball)>,
-    border_query: Query<Entity, With<Border>>,
+    platform_query: Query<&Platform>,
+    ball_query: Query<&Ball>,
+    border_query: Query<&Border>,
 ) {
     for ev in collisions.read() {
         if let CollisionEvent::Started(entity1, entity2, _) = ev {
-            if platform_query.get(*entity1).is_ok() && ball_query.get(*entity2).is_ok() {
-                if let Ok((_, ball)) = ball_query.get(*entity2) {
-                    if ball.lay_on_platform {
-                        continue;
-                    }
+            let ball = get_component(*entity1, *entity2, &ball_query);
+            let platform = get_component(*entity1, *entity2, &platform_query);
+            let border = get_component(*entity1, *entity2, &border_query);
 
-                    if let Ok((_, platform)) = platform_query.get(*entity1) {
-                        commands.spawn(AudioBundle {
-                            source: platform.collision_sound.clone(),
-                            settings: PlaybackSettings {
-                                mode: bevy::audio::PlaybackMode::Despawn,
-                                ..Default::default()
-                            },
-                        });
-                    }
+            // Ball and Platform collision
+            if let (Some(ball), Some(platform)) = (ball, platform) {
+                if ball.lay_on_platform {
+                    continue;
                 }
+                commands.spawn(AudioBundle {
+                    source: platform.ball_collision_sound.clone(),
+                    settings: PlaybackSettings {
+                        mode: bevy::audio::PlaybackMode::Despawn,
+                        ..Default::default()
+                    },
+                });
             }
-
-            if platform_query.get(*entity2).is_ok() && ball_query.get(*entity1).is_ok() {
-                if let Ok((_, ball)) = ball_query.get(*entity1) {
-                    if ball.lay_on_platform {
-                        continue;
-                    }
-                    if let Ok((_, platform)) = platform_query.get(*entity2) {
-                        commands.spawn(AudioBundle {
-                            source: platform.collision_sound.clone(),
-                            settings: PlaybackSettings {
-                                mode: bevy::audio::PlaybackMode::Despawn,
-                                ..Default::default()
-                            },
-                        });
-                    }
-                }
+            // Ball and Border collision
+            if let (Some(ball), Some(_)) = (ball, border) {
+                commands.spawn(AudioBundle {
+                    source: ball.border_collision_sound.clone(),
+                    settings: PlaybackSettings {
+                        mode: bevy::audio::PlaybackMode::Despawn,
+                        ..Default::default()
+                    },
+                });
+            }
+            // Platform and Border collision
+            if let (Some(platform), Some(_)) = (platform, border) {
+                commands.spawn(AudioBundle {
+                    source: platform.border_collision_sound.clone(),
+                    settings: PlaybackSettings {
+                        mode: bevy::audio::PlaybackMode::Despawn,
+                        ..Default::default()
+                    },
+                });
             }
         }
     }

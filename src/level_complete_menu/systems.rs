@@ -7,7 +7,18 @@ use bevy_ecs_ldtk::LevelSelection;
 use super::components::LevelCompleteMenu;
 use crate::states::GameState;
 
-pub fn spawn_level_complete_menu(textures: Res<Textures>, mut commands: Commands) {
+pub fn spawn_level_complete_menu(
+    textures: Res<Textures>,
+    mut commands: Commands,
+    assets_server: Res<AssetServer>,
+) {
+    commands.spawn(AudioBundle {
+        source: assets_server.load("sounds/level_complete.ogg"),
+        settings: PlaybackSettings {
+            mode: bevy::audio::PlaybackMode::Despawn,
+            ..Default::default()
+        },
+    });
     // Main menu container
     let main_menu_node = NodeBundle {
         style: Style {
