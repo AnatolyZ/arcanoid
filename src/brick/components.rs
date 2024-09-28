@@ -18,6 +18,8 @@ pub struct Brick {
     pub inhibition_rate: f32,
     pub brick_type: BrickType,
     pub health: Health,
+    pub collision_sound: Handle<AudioSource>,
+    pub destruction_sound: Handle<AudioSource>,
 }
 
 #[derive(Default, Component)]
@@ -56,24 +58,28 @@ impl From<IntGridCell> for Brick {
                 inhibition_rate: 1.,
                 brick_type: BrickType::Sand,
                 health: Health(100),
+                ..Default::default()
             },
             2 => Brick {
                 resistance: 8,
                 inhibition_rate: 1.,
                 brick_type: BrickType::Stone,
                 health: Health(100),
+                ..Default::default()
             },
             3 => Brick {
                 resistance: 15,
                 inhibition_rate: 1.,
                 brick_type: BrickType::Rock,
                 health: Health(100),
+                ..Default::default()
             },
             4 => Brick {
                 resistance: 25,
                 inhibition_rate: 1.,
                 brick_type: BrickType::Marble,
                 health: Health(100),
+                ..Default::default()
             },
             _ => Brick::default(),
         }

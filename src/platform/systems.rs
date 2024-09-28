@@ -1,6 +1,7 @@
 use super::components::Platform;
 use crate::ball::components::Ball;
 use crate::ball::NewBallOnPlatform;
+use crate::play_area::Border;
 use crate::play_area::MainCamera;
 use crate::textures::{resources::Textures, HALF_TILE_SIZE, TILE_SIZE};
 use crate::SCREEN_HEIGHT;
@@ -140,11 +141,7 @@ pub fn spawn_ball_on_platform(
 }
 
 pub fn move_platform(
-    mut query: Query<(
-        &mut ExternalImpulse,
-        &mut Velocity,
-        &GlobalTransform
-    ), With<Platform>>,
+    mut query: Query<(&mut ExternalImpulse, &mut Velocity, &GlobalTransform), With<Platform>>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     window: Query<&Window, With<PrimaryWindow>>,
     camera_query: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
@@ -195,41 +192,44 @@ pub fn collision_handler(
     mut collisions: EventReader<CollisionEvent>,
     platform_query: Query<(Entity, &Platform)>,
     ball_query: Query<(Entity, &Ball)>,
-
+    border_query: Query<Entity, With<Border>>,
 ) {
     for ev in collisions.read() {
         if let CollisionEvent::Started(entity1, entity2, _) = ev {
             if platform_query.get(*entity1).is_ok() && ball_query.get(*entity2).is_ok() {
                 if let Ok((_, ball)) = ball_query.get(*entity2) {
-                    if ball.lay_on_platform{
+                    if ball.lay_on_platform {
                         continue;
                     }
-                if let Ok((_, platform)) = platform_query.get(*entity1) {
-                    commands.spawn(AudioBundle{
-                        source: platform.collision_sound.clone(),
-                        settings: PlaybackSettings{
-                            mode:bevy::audio::PlaybackMode::Despawn,
-                            ..Default::default()
-                        }
-                    });
+
+                    if let Ok((_, platform)) = platform_query.get(*entity1) {
+                        commands.spawn(AudioBundle {
+                            source: platform.collision_sound.clone(),
+                            settings: PlaybackSettings {
+                                mode: bevy::audio::PlaybackMode::Despawn,
+                                ..Default::default()
+                            },
+                        });
+                    }
                 }
             }
+
             if platform_query.get(*entity2).is_ok() && ball_query.get(*entity1).is_ok() {
                 if let Ok((_, ball)) = ball_query.get(*entity1) {
-                    if ball.lay_on_platform{
+                    if ball.lay_on_platform {
                         continue;
                     }
-                if let Ok((_, platform)) = platform_query.get(*entity2) {
-                    commands.spawn(AudioBundle{
-                        source: platform.collision_sound.clone(),
-                        settings: PlaybackSettings{
-                            mode:bevy::audio::PlaybackMode::Despawn,
-                            ..Default::default()
-                        }
-                    });
+                    if let Ok((_, platform)) = platform_query.get(*entity2) {
+                        commands.spawn(AudioBundle {
+                            source: platform.collision_sound.clone(),
+                            settings: PlaybackSettings {
+                                mode: bevy::audio::PlaybackMode::Despawn,
+                                ..Default::default()
+                            },
+                        });
+                    }
                 }
             }
         }
-        }
-    }}
+    }
 }
