@@ -1,6 +1,7 @@
 use super::components::Ball;
 use super::NewBallOnPlatform;
 use crate::lifes::LifeLost;
+use crate::platform::components::Platform;
 use crate::textures::HALF_TILE_SIZE;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
@@ -29,10 +30,11 @@ pub fn confine_ball_speed(mut query: Query<(&mut Velocity, &Ball)>) {
     }
 }
 
+#[allow(clippy::type_complexity)]
 pub fn launch_ball(
     mut commands: Commands,
-    mut ball_query: Query<(Entity, &mut Velocity, &mut Transform, &mut Ball)>,
-    mut platform_query: Query<(Entity, &Transform, &Velocity), Without<Ball>>,
+    mut ball_query: Query<(Entity, &mut Velocity, &mut Transform, &mut Ball), With<Ball>>,
+    mut platform_query: Query<(Entity, &Transform, &Velocity), (With<Platform>, Without<Ball>)>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mouse_button: Res<ButtonInput<MouseButton>>,
 ) {

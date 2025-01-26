@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-mod components;
+pub mod components;
 pub(crate) mod systems;
 
 pub struct PlatformPlugin;

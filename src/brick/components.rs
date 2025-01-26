@@ -20,6 +20,8 @@ pub struct Brick {
     pub health: Health,
     pub collision_sound: Handle<AudioSource>,
     pub destruction_sound: Handle<AudioSource>,
+    pub buff_probability: i32,
+    pub debuff_probability: i32,
 }
 
 #[derive(Default, Component)]
@@ -58,6 +60,8 @@ impl From<IntGridCell> for Brick {
                 inhibition_rate: 1.,
                 brick_type: BrickType::Sand,
                 health: Health(100),
+                buff_probability: 5,
+                debuff_probability: 20,
                 ..Default::default()
             },
             2 => Brick {
@@ -65,6 +69,8 @@ impl From<IntGridCell> for Brick {
                 inhibition_rate: 1.,
                 brick_type: BrickType::Stone,
                 health: Health(100),
+                buff_probability: 5,
+                debuff_probability: 10,
                 ..Default::default()
             },
             3 => Brick {
@@ -72,6 +78,8 @@ impl From<IntGridCell> for Brick {
                 inhibition_rate: 1.,
                 brick_type: BrickType::Rock,
                 health: Health(100),
+                buff_probability: 10,
+                debuff_probability: 5,
                 ..Default::default()
             },
             4 => Brick {
@@ -79,6 +87,8 @@ impl From<IntGridCell> for Brick {
                 inhibition_rate: 1.,
                 brick_type: BrickType::Marble,
                 health: Health(100),
+                buff_probability: 20,
+                debuff_probability: 5,
                 ..Default::default()
             },
             _ => Brick::default(),

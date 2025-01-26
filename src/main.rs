@@ -1,5 +1,6 @@
 mod ball;
 mod brick;
+mod falling_object;
 mod game_over_menu;
 mod level_complete_menu;
 mod lifes;

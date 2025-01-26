@@ -1,5 +1,6 @@
 use super::components::{Brick, BrickType};
 use crate::ball::Ball;
+use crate::falling_object;
 use crate::states::GameState;
 use crate::textures::{resources::Textures, HALF_BRICK_TILE_SIZE};
 use bevy::prelude::*;
@@ -65,23 +66,24 @@ pub fn add_brick_textures(
 
 pub fn collision_handler(
     mut commands: Commands,
+    textures: ResMut<Textures>,
     mut collisions: EventReader<CollisionEvent>,
-    mut brick_query: Query<(&mut TextureAtlas, &mut Brick)>,
+    mut brick_query: Query<(&mut TextureAtlas, &Transform, &mut Brick)>,
     mut ball_speed_query: Query<&mut Velocity, With<Ball>>,
 ) {
     for ev in collisions.read() {
         if let CollisionEvent::Started(entity1, entity2, _) = ev {
-            let (brick_entity, mut ball_speed, mut sprite, mut brick) = {
-                if let (Ok((sprite, brick)), Ok(ball_speed)) = (
+            let (brick_entity, mut ball_speed, mut sprite, mut brick, brick_transform) = {
+                if let (Ok((sprite, brick_transform, brick)), Ok(ball_speed)) = (
                     brick_query.get_mut(*entity1),
                     ball_speed_query.get_mut(*entity2),
                 ) {
-                    (*entity1, ball_speed, sprite, brick)
-                } else if let (Ok((sprite, brick)), Ok(ball_speed)) = (
+                    (*entity1, ball_speed, sprite, brick, brick_transform)
+                } else if let (Ok((sprite, brick_transform, brick)), Ok(ball_speed)) = (
                     brick_query.get_mut(*entity2),
                     ball_speed_query.get_mut(*entity1),
                 ) {
-                    (*entity2, ball_speed, sprite, brick)
+                    (*entity2, ball_speed, sprite, brick, brick_transform)
                 } else {
                     continue;
                 }
@@ -91,6 +93,14 @@ pub fn collision_handler(
             brick.health.0 -= (sum_speed / brick.resistance as f32) as i32;
             if brick.health.0 <= 0 {
                 commands.entity(brick_entity).despawn();
+                falling_object::spawn_falling_object(
+                    &mut commands,
+                    &textures,
+                    brick.buff_probability,
+                    brick.debuff_probability,
+                    brick_transform.translation.x,
+                    brick_transform.translation.y,
+                );
                 ball_speed.linvel *= brick.inhibition_rate;
                 let rotate = Rng::gen_range(&mut rand::thread_rng(), 0..=10);
                 ball_speed.linvel = Vec2::new(1.0, 0.1 - 0.02 * rotate as f32)
